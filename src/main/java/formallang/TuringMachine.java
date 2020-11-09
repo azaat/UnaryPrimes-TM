@@ -21,6 +21,8 @@ public class TuringMachine {
         this.transitionFunc = transitionFunc;
     }
 
+    // TODO: toString implementation
+
     public Set<State> getInitialStates() {
         return initialStates;
     }
