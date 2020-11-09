@@ -1,17 +1,18 @@
 package formallang;
 
 import java.util.List;
+import java.util.Set;
 
 public class UnrestrictedGrammar {
-    private final List<GrammarSymbol> terminals;
-    private final List<GrammarSymbol> variables;
-    private final List<Production> productions;
+    private final Set<GrammarSymbol> terminals;
+    private final Set<GrammarSymbol> variables;
+    private final Set<Production> productions;
     private final GrammarSymbol startSymbol;
 
     public UnrestrictedGrammar(
-            List<GrammarSymbol> terminals,
-            List<GrammarSymbol> variables,
-            List<Production> productions,
+            Set<GrammarSymbol> terminals,
+            Set<GrammarSymbol> variables,
+            Set<Production> productions,
             GrammarSymbol startSymbol
     ) {
         this.terminals = terminals;
@@ -20,15 +21,15 @@ public class UnrestrictedGrammar {
         this.startSymbol = startSymbol;
     }
 
-    public List<GrammarSymbol> getTerminals() {
+    public Set<GrammarSymbol> getTerminals() {
         return terminals;
     }
 
-    public List<GrammarSymbol> getVariables() {
+    public Set<GrammarSymbol> getVariables() {
         return variables;
     }
 
-    public List<Production> getProductions() {
+    public Set<Production> getProductions() {
         return productions;
     }
 
