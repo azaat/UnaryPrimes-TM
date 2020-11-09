@@ -1,3 +1,5 @@
+package utils;
+
 import formallang.TuringMachine;
 
 import java.io.BufferedReader;
