@@ -79,7 +79,8 @@ public class TuringMachine {
     public static class Transition {
         public enum Direction {
             LEFT,
-            RIGHT
+            RIGHT,
+            STAY
         }
 
         private final TransitionContext contextTo;
