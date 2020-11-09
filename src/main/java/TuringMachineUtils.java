@@ -5,14 +5,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class TuringMachineUtils {
     private static final String INIT_PREFIX = "init: ";
     private static final String FINAL_PREFIX = "accept: ";
+    private static final String SEPARATOR = ",";
 
     public static TuringMachine loadTuringMachine(Path path) throws IOException {
         try (BufferedReader reader = Files.newBufferedReader(path)) {
@@ -23,25 +21,68 @@ public class TuringMachineUtils {
             Map<TuringMachine.TransitionContext, TuringMachine.Transition> transitionFunc = new HashMap<>();
 
             boolean isPreviousEmptyLine = false;
+            TuringMachine.TransitionContext lastContext = null;
 
             while ((line = reader.readLine()) != null) {
-                if (line.startsWith("//")) {
-                    continue;
-                } else if (line.startsWith(INIT_PREFIX)) {
-                    initialStates.add(
-                        new TuringMachine.State(line.replaceFirst(INIT_PREFIX, ""))
-                    );
+                if (line.startsWith(INIT_PREFIX)) {
+                    String[] initialStatesVals = line.replace(INIT_PREFIX, "").split(SEPARATOR);
+                    for (String initialStatesVal : initialStatesVals) {
+                        initialStates.add(
+                            new TuringMachine.State(initialStatesVal)
+                        );
+                    }
                 } else if (line.startsWith(FINAL_PREFIX)) {
-                    finalStates.add(
-                        new TuringMachine.State(line.replaceFirst(FINAL_PREFIX, ""))
-                    );
-                } else if (line.startsWith(" ")) {
+                    String[] finalStatesVals = line.replace(INIT_PREFIX, "").split(SEPARATOR);
+                    for (String finalStateVal : finalStatesVals) {
+                        finalStates.add(
+                                new TuringMachine.State(finalStateVal)
+                        );
+                    }
+                } else if (line.startsWith(" ") || line.length() == 0) {
                     isPreviousEmptyLine = true;
-                } else {
+                } else if (!line.startsWith("//")) {
+                    String[] values = line.split(SEPARATOR);
                     if (isPreviousEmptyLine) {
-                        // TODO: transition context
+                        // Encountered line with transition context
+                        TuringMachine.State state = new TuringMachine.State(
+                                values[0]
+                        );
+                        states.add(state);
+                        lastContext = new TuringMachine.TransitionContext(
+                                state,
+                                values[1]
+                        );
+
                     } else {
-                        // TODO: transition
+                        // Encountered line with transition
+                        TuringMachine.Transition.Direction direction;
+                        switch (values[2]) {
+                            case ">":
+                                direction = TuringMachine.Transition.Direction.RIGHT;
+                                break;
+                            case "<":
+                                direction = TuringMachine.Transition.Direction.LEFT;
+                                break;
+                            case "-":
+                                direction = TuringMachine.Transition.Direction.STAY;
+                                break;
+                            default:
+                                throw new IllegalArgumentException("Provided incorrect direction");
+                        }
+                        TuringMachine.State state = new TuringMachine.State(
+                                values[0]
+                        );
+                        states.add(state);
+                        TuringMachine.Transition transition = new TuringMachine.Transition(
+                            new TuringMachine.TransitionContext(
+                                state,
+                                values[1]
+                            ),
+                            direction
+                        );
+                        if (lastContext != null) {
+                            transitionFunc.put(lastContext, transition);
+                        }
                     }
                     isPreviousEmptyLine = false;
                 }
