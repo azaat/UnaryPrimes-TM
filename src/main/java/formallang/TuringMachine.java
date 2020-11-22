@@ -5,26 +5,26 @@ import java.util.Set;
 
 public class TuringMachine {
     private final Set<State> states;
-    private final Set<State> initialStates;
+    private final State initialState;
     private final Set<State> finalStates;
     private final Map<TransitionContext, Transition> transitionFunc;
 
     public TuringMachine(
         Set<State> states,
-        Set<State> initialStates,
+        State initialState,
         Set<State> finalStates,
         Map<TransitionContext, Transition> transitionFunc
     ) {
         this.states = states;
-        this.initialStates = initialStates;
+        this.initialState = initialState;
         this.finalStates = finalStates;
         this.transitionFunc = transitionFunc;
     }
 
     // TODO: toString implementation
 
-    public Set<State> getInitialStates() {
-        return initialStates;
+    public State getInitialState() {
+        return initialState;
     }
 
     public Set<State> getFinalStates() {

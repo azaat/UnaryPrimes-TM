@@ -14,11 +14,12 @@ public class TuringMachineUtils {
     private static final String FINAL_PREFIX = "accept: ";
     private static final String SEPARATOR = ",";
 
-    public static TuringMachine loadTuringMachine(Path path) throws IOException {
+    public static TuringMachine loadTuringMachine(Path path)
+            throws IOException, IllegalStateException {
         BufferedReader reader = Files.newBufferedReader(path);
         String line;
         Set<TuringMachine.State> states = new HashSet<>();
-        Set<TuringMachine.State> initialStates = new HashSet<>();
+        TuringMachine.State initialState = null;
         Set<TuringMachine.State> finalStates = new HashSet<>();
         Map<TuringMachine.TransitionContext, TuringMachine.Transition> transitionFunc = new HashMap<>();
 
@@ -27,12 +28,8 @@ public class TuringMachineUtils {
 
         while ((line = reader.readLine()) != null) {
             if (line.startsWith(INIT_PREFIX)) {
-                String[] initialStatesVals = line.replace(INIT_PREFIX, "").split(SEPARATOR);
-                for (String initialStatesVal : initialStatesVals) {
-                    initialStates.add(
-                        new TuringMachine.State(initialStatesVal)
-                    );
-                }
+                String initialStateVal = line.replace(INIT_PREFIX, "");
+                initialState = new TuringMachine.State(initialStateVal);
             } else if (line.startsWith(FINAL_PREFIX)) {
                 String[] finalStatesVals = line.replace(INIT_PREFIX, "").split(SEPARATOR);
                 for (String finalStateVal : finalStatesVals) {
@@ -89,7 +86,10 @@ public class TuringMachineUtils {
                 isPreviousEmptyLine = false;
             }
         }
-
-        return new TuringMachine(states, initialStates, finalStates, transitionFunc);
+        if (initialState != null) {
+            return new TuringMachine(states, initialState, finalStates, transitionFunc);
+        } else {
+            throw new IllegalStateException();
+        }
     }
 }
