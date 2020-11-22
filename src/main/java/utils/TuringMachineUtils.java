@@ -31,7 +31,7 @@ public class TuringMachineUtils {
                 String initialStateVal = line.replace(INIT_PREFIX, "");
                 initialState = new TuringMachine.State(initialStateVal);
             } else if (line.startsWith(FINAL_PREFIX)) {
-                String[] finalStatesVals = line.replace(INIT_PREFIX, "").split(SEPARATOR);
+                String[] finalStatesVals = line.replace(FINAL_PREFIX, "").split(SEPARATOR);
                 for (String finalStateVal : finalStatesVals) {
                     finalStates.add(
                             new TuringMachine.State(finalStateVal)
