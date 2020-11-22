@@ -9,5 +9,8 @@
         <module name="unary-primes" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="unary-primes" target="11" />
+    </bytecodeTargetLevel>
   </component>
 </project>
