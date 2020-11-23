@@ -8,16 +8,15 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.Set;
+
+import static formallang.UnrestrictedGrammar.GrammarSymbol;
+import static formallang.UnrestrictedGrammar.Production;
 
 public class GrammarUtils {
     public static Path storeGrammar(UnrestrictedGrammar grammar, String path) {
         Path grammarPath = Paths.get(path);
-        try {
-            Files.createFile(grammarPath);
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException();
-        }
 
         try (BufferedWriter writer = Files.newBufferedWriter(grammarPath, StandardCharsets.UTF_8)) {
             writer.write(String.format("Start symbol: %s\n", grammar.getStartSymbol().getValue()));
@@ -43,5 +42,24 @@ public class GrammarUtils {
         }
 
         return grammarPath;
+    }
+
+    public static void main(String[] args) {
+        GrammarSymbol startSymb = new GrammarSymbol("S", false);
+        GrammarSymbol a = new GrammarSymbol("a", true);
+        GrammarSymbol b = new GrammarSymbol("b", true);
+        GrammarSymbol eps = new GrammarSymbol("eps", true);
+
+        Production prod1 = new Production(List.of(startSymb), List.of(startSymb, a, startSymb, b));
+        Production prod2 = new Production(List.of(startSymb), List.of(eps));
+
+        UnrestrictedGrammar grammar = new UnrestrictedGrammar(
+                Set.of(a, b, eps),
+                Set.of(startSymb),
+                Set.of(prod1, prod2),
+                startSymb
+        );
+
+        GrammarUtils.storeGrammar(grammar, "src/main/resources/test_grammar.txt");
     }
 }
