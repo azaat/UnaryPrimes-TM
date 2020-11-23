@@ -83,6 +83,20 @@ public class UnrestrictedGrammar {
         public List<GrammarSymbol> getBody() {
             return body;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Production that = (Production) o;
+            return Objects.equals(head, that.head) &&
+                    Objects.equals(body, that.body);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(head, body);
+        }
     }
 
     public static class GrammarSymbol {
