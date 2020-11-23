@@ -103,6 +103,11 @@ public class UnrestrictedGrammar {
         private final String value;
         private final boolean isTerminal;
 
+        @Override
+        public String toString() {
+            return value;
+        }
+
         public GrammarSymbol(String value, boolean isTerminal) {
             this.value = value;
             this.isTerminal = isTerminal;
