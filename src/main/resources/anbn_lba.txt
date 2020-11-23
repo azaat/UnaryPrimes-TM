@@ -1,4 +1,4 @@
-init: q0
+init: q00
 accept: acc
 
 ///////////// https://cs.stackexchange.com/questions/43762/how-does-this-turing-machine-accept-an-bn
