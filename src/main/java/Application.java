@@ -1,7 +1,4 @@
-import formallang.TmToUnrestrictedGrammar;
-import formallang.TuringMachine;
-import formallang.UnrestrictedGrammar;
-import formallang.WordsGenerator;
+import formallang.*;
 import utils.GrammarUtils;
 import utils.TuringMachineUtils;
 
@@ -17,7 +14,7 @@ public class Application {
         try {
             TuringMachine tm = TuringMachineUtils.loadTuringMachine(turingMachinePath);
 
-            UnrestrictedGrammar grammar = TmToUnrestrictedGrammar.convert(tm);
+            UnrestrictedGrammar grammar = LbaToCSGrammar.convert(tm);
             WordsGenerator.generate(grammar, 4);
             //GrammarUtils.storeGrammar(grammar, "anbn.txt");
         } catch (IOException e) {
