@@ -8,13 +8,17 @@ import static formallang.TuringMachine.*;
 import static formallang.UnrestrictedGrammar.*;
 
 public class TmToUnrestrictedGrammar {
-    public static final Set<String> SIGMA = Set.of("0", "1");
+    //public static final Set<String> SIGMA = Set.of("0", "1");
+    public static final Set<String> SIGMA = Set.of("1");
     public static final String EPS = "eps";
     public static final String BLANK = "_";
     public static final Set<String> SIGMA_EPS = Stream.concat(
             SIGMA.stream(), Stream.of(EPS)).collect(Collectors.toSet());
-    public static final Set<String> GAMMA = Stream.concat(
+    /*public static final Set<String> GAMMA = Stream.concat(
             SIGMA.stream(), List.of("A", "B", BLANK).stream()).collect(Collectors.toSet());
+    */
+    public static final Set<String> GAMMA = Stream.concat(
+            SIGMA.stream(), List.of(BLANK).stream()).collect(Collectors.toSet());
 
     public static UnrestrictedGrammar convert(TuringMachine tm) {
         // Construct terminals

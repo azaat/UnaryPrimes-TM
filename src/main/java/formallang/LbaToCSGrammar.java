@@ -19,7 +19,8 @@ import static formallang.TuringMachine.Transition.Direction;
 public class LbaToCSGrammar {
     private static final String L = "c";
     private static final String R = "$";
-    private static final Set<String> ALPHABET = Set.of("0", "1");
+    //private static final Set<String> ALPHABET = Set.of("0", "1");
+    private static final Set<String> ALPHABET = Set.of("1");
 
     public static UnrestrictedGrammar convert(TuringMachine turingMachine) {
         Set<Production> productions = new LinkedHashSet<>();

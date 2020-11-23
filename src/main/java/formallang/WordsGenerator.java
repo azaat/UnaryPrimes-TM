@@ -44,11 +44,11 @@ public class WordsGenerator {
             if (!visited.contains(sentence)) {
                 visited.add(sentence);
 
-                if (sentence.size() <= n && sentence.stream().allMatch(
+                if (sentence.stream().allMatch(
                         GrammarSymbol::isTerminal
                 )) {
+                    if (sentence.size() >= n) return;
                     System.out.println("YAAAY! " + sentence + " depth: " + node.depth);
-                    if (sentence.size() == n) return;
                 }
 
                 for (int pos = 0; pos < sentence.size() ; pos++) {

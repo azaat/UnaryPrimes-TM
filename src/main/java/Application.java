@@ -10,13 +10,14 @@ import java.util.Set;
 
 public class Application {
     public static void main(String[] args) {
-        Path turingMachinePath = Paths.get("src", "main", "resources", "anbn_lba.txt");
+        Path turingMachinePath = Paths.get("src", "main", "resources", "even_lba.txt");
         try {
             TuringMachine tm = TuringMachineUtils.loadTuringMachine(turingMachinePath);
 
             UnrestrictedGrammar grammar = LbaToCSGrammar.convert(tm);
-            WordsGenerator.generate(grammar, 4);
-            //GrammarUtils.storeGrammar(grammar, "anbn.txt");
+            System.out.println(grammar.getProductions().size());
+            WordsGenerator.generate(grammar, 5);
+            //GrammarUtils.storeGrammar(grammar, "even.txt");
         } catch (IOException e) {
             e.printStackTrace();
         }
