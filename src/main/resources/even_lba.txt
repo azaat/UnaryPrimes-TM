@@ -1,4 +1,4 @@
-init: q0
+init: q00
 accept: acc
 
 /////////////
