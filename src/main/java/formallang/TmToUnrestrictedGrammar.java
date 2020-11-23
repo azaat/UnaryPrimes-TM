@@ -14,13 +14,11 @@ public class TmToUnrestrictedGrammar {
     public static final String BLANK = "_";
     public static final Set<String> SIGMA_EPS = Stream.concat(
             SIGMA.stream(), Stream.of(EPS)).collect(Collectors.toSet());
-    /*public static final Set<String> GAMMA = Stream.concat(
-            SIGMA.stream(), List.of("A", "B", BLANK).stream()).collect(Collectors.toSet());
-    */
-    public static final Set<String> GAMMA = Stream.concat(
-            SIGMA.stream(), List.of(BLANK).stream()).collect(Collectors.toSet());
 
     public static UnrestrictedGrammar convert(TuringMachine tm) {
+        final Set<String> GAMMA;
+        GAMMA = getPossTapeSymbols(tm);
+
         // Construct terminals
         Set<GrammarSymbol> terminals = SIGMA.stream().map(
                 s -> new GrammarSymbol(s, true)
@@ -134,5 +132,21 @@ public class TmToUnrestrictedGrammar {
             productions.add(new Production(head, body));
         }
         return new UnrestrictedGrammar(terminals, variables, productions, s);
+    }
+
+    private static Set<String> getPossTapeSymbols(TuringMachine turingMachine) {
+        Set<String> possTapeSyms = new HashSet<>();
+
+        for (Map.Entry<TransitionContext, Transition> entry : turingMachine.getTransitionFunc().entrySet()) {
+            TransitionContext ctx = entry.getKey();
+            Transition trans = entry.getValue();
+
+            String ctxSym = ctx.getTapeSym();
+            String transSym = trans.getContextTo().getTapeSym();
+            possTapeSyms.add(transSym);
+            possTapeSyms.add(ctxSym);
+        }
+
+        return possTapeSyms;
     }
 }
