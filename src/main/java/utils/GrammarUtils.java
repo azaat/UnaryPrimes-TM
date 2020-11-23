@@ -29,9 +29,16 @@ public class GrammarUtils {
             StringBuilder allProdBuilder = new StringBuilder();
             grammar.getProductions().forEach(production -> {
                 final StringBuilder prodBuilder = new StringBuilder();
-                production.getHead().forEach(s -> prodBuilder.append(s.getValue()));
+                production.getHead().forEach(
+                        s -> prodBuilder
+                        .append(s.getValue())
+                        .append(" ")
+                );
                 prodBuilder.append(" -> ");
-                production.getBody().forEach(s -> prodBuilder.append(s.getValue()));
+                production.getBody().forEach(s -> prodBuilder
+                        .append(s.getValue())
+                        .append(" ")
+                );
 
                 allProdBuilder.append(prodBuilder).append("\n");
             });
