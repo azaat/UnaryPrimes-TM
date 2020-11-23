@@ -68,7 +68,7 @@ public class WordsGenerator {
                                         sym -> sym.getValue().equals(EPS)
                                 );
                                 // Construct new sentence from chosen substring with current production
-                                // [pref] [new sentence] [suff]
+                                // [pref] [new body] [suff]
                                 List<GrammarSymbol> newSentence = new LinkedList<>(start);
                                 newSentence.addAll(bodyNoEps);
                                 newSentence.addAll(end);
