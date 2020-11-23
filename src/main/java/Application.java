@@ -10,7 +10,7 @@ import java.util.Set;
 
 public class Application {
     public static void main(String[] args) {
-        Path turingMachinePath = Paths.get("src", "main", "resources", "anbn_turing_machine.txt");
+        Path turingMachinePath = Paths.get("src", "main", "resources", "anbn_lba.txt");
         try {
             TuringMachine tm = TuringMachineUtils.loadTuringMachine(turingMachinePath);
 
