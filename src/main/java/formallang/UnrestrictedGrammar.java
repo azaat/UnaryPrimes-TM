@@ -1,6 +1,8 @@
 package formallang;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 public class UnrestrictedGrammar {
@@ -19,6 +21,34 @@ public class UnrestrictedGrammar {
         this.variables = variables;
         this.productions = productions;
         this.startSymbol = startSymbol;
+    }
+
+    public UnrestrictedGrammar(Set<Production> productions, GrammarSymbol startSymbol) {
+        this.productions = productions;
+        this.startSymbol = startSymbol;
+
+        Set<GrammarSymbol> terminals = new HashSet<>();
+        Set<GrammarSymbol> variables = new HashSet<>();
+
+        for (var prod : productions) {
+            for (var sym : prod.getHead()) {
+                if (sym.isTerminal) {
+                    terminals.add(sym);
+                } else {
+                    variables.add(sym);
+                }
+            }
+            for (var sym : prod.getBody()) {
+                if (sym.isTerminal) {
+                    terminals.add(sym);
+                } else {
+                    variables.add(sym);
+                }
+            }
+        }
+
+        this.terminals = terminals;
+        this.variables = variables;
     }
 
     public Set<GrammarSymbol> getTerminals() {
@@ -70,6 +100,20 @@ public class UnrestrictedGrammar {
 
         public boolean isTerminal() {
             return isTerminal;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            GrammarSymbol that = (GrammarSymbol) o;
+            return isTerminal == that.isTerminal &&
+                    value.equals(that.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(value, isTerminal);
         }
     }
 }
