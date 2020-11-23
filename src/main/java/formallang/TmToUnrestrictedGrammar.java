@@ -1,7 +1,5 @@
 package formallang;
 
-import utils.GrammarUtils;
-
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -12,11 +10,11 @@ import static formallang.UnrestrictedGrammar.*;
 public class TmToUnrestrictedGrammar {
     public static final Set<String> SIGMA = Set.of("0", "1");
     public static final String EPS = "eps";
-    public static final String BLANC = "_";
+    public static final String BLANK = "_";
     public static final Set<String> SIGMA_EPS = Stream.concat(
             SIGMA.stream(), Stream.of(EPS)).collect(Collectors.toSet());
     public static final Set<String> GAMMA = Stream.concat(
-            SIGMA.stream(), List.of("A", "B", BLANC).stream()).collect(Collectors.toSet());
+            SIGMA.stream(), List.of("A", "B", BLANK).stream()).collect(Collectors.toSet());
 
     public static UnrestrictedGrammar convert(TuringMachine tm) {
         // Construct terminals
@@ -51,8 +49,8 @@ public class TmToUnrestrictedGrammar {
         Set<Production> productions = new HashSet<>(Arrays.asList(
                 new Production(List.of(s), List.of(s1, q0, s2)),
                 new Production(List.of(s2), List.of(s3)),
-                new Production(List.of(s1), List.of(s1, new GrammarSymbol("[" + EPS + "|" + BLANC + "]", false))),
-                new Production(List.of(s3), List.of(new GrammarSymbol("[" + EPS + "|" + BLANC + "]", false), s3)),
+                new Production(List.of(s1), List.of(s1, new GrammarSymbol("[" + EPS + "|" + BLANK + "]", false))),
+                new Production(List.of(s3), List.of(new GrammarSymbol("[" + EPS + "|" + BLANK + "]", false), s3)),
                 new Production(List.of(s1), List.of(new GrammarSymbol(EPS, false))),
                 new Production(List.of(s3), List.of(new GrammarSymbol(EPS, false)))
         ));
