@@ -8,7 +8,7 @@ import static formallang.TmToUnrestrictedGrammar.EPS;
 import static formallang.UnrestrictedGrammar.GrammarSymbol;
 import static formallang.UnrestrictedGrammar.Production;
 
-public class WordsGenerator {
+public class WordUtils {
     public static boolean contains(UnrestrictedGrammar grammar, int n, Set<TuringMachine.State> finalStates) {
         List<Production> productions = grammar.getProductions().stream().sorted(
                 Comparator.comparingInt(p -> p.getBody().size())
