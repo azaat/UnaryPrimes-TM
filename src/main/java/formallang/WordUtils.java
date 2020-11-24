@@ -3,12 +3,13 @@ package formallang;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static formallang.TmToUnrestrictedGrammar.BLANK;
 import static formallang.TmToUnrestrictedGrammar.EPS;
 import static formallang.UnrestrictedGrammar.GrammarSymbol;
 import static formallang.UnrestrictedGrammar.Production;
 
 public class WordsGenerator {
-    public static void generate(UnrestrictedGrammar grammar, int n) {
+    public static boolean contains(UnrestrictedGrammar grammar, int n, Set<TuringMachine.State> finalStates) {
         List<Production> productions = grammar.getProductions().stream().sorted(
                 Comparator.comparingInt(p -> p.getBody().size())
         ).collect(Collectors.toList());
@@ -37,15 +38,42 @@ public class WordsGenerator {
         while (!queue.isEmpty()) {
             Node node = queue.poll();
             List<GrammarSymbol> sentence = node.sentence;
+
+            boolean foundFinal = false;
+            for (TuringMachine.State finalState : finalStates) {
+                // Hacky optimization to accept word when encountered final state
+                // without opening all the variables with BFS
+                Optional<Integer> optWordSize = getWordSizeIfHasFinal(sentence, productions, finalState);
+                if (optWordSize.isPresent()) {
+                    int wordSize = optWordSize.get();
+
+                    if (wordSize == n) {
+                        System.out.println("Found match " + sentence + " len: " + sentence.size());
+                        return true;
+                    } else if (wordSize > n) {
+                        System.out.println("Did not find any match");
+                        return false;
+                    }
+
+                    foundFinal = true;
+                }
+            }
+
             if (!visited.contains(sentence)) {
                 visited.add(sentence);
-                if (sentence.stream().allMatch(
+
+                if (foundFinal) {
+                    System.out.println("Sent with final state " + sentence + " len: " + sentence.size());
+                    // If we encountered sentence with final state we don't open it up further
+                    continue;
+                }
+                /*if (sentence.stream().allMatch(
                         GrammarSymbol::isTerminal
                 )) {
                     // All terminals, generated word
-                    if (sentence.size() >= n) return;
-                    System.out.println("YAAAY! " + sentence + " depth: " + node.depth);
-                }
+                    if (sentence.size() >= n) return true;
+                    System.out.println("Generated " + sentence + " depth: " + node.depth);
+                }*/
 
                 for (int pos = 0; pos < sentence.size(); pos++) {
                     int limit = optMaxHead.orElse(sentence.size() - pos);
@@ -80,6 +108,46 @@ public class WordsGenerator {
                     }
                 }
             }
+        }
+
+        // Exited loop without returning, so we did not find accepting sentence
+        return false;
+    }
+
+    /**
+     *
+     * @param sentence
+     * @param productions
+     * @param finalState
+     * @return Count of symbols if has final, otherwise empty
+     */
+    private static Optional<Integer> getWordSizeIfHasFinal(List<GrammarSymbol> sentence, List<Production> productions, TuringMachine.State finalState) {
+        // Hacky optimization to accept word when encountered final state
+        // without opening all the variables with BFS
+        if (sentence.contains(new GrammarSymbol(finalState.getValue(), false))) {
+            GrammarSymbol epsBlankSym = new GrammarSymbol("[" + EPS + "|" + BLANK + "]", false);
+
+            // Apply eps productions
+            for (Production production : productions) {
+                List<GrammarSymbol> head = production.getHead();
+                if (
+                        head.size() == 1 && sentence.contains(head.get(0))
+                                && production.getBody().size() == 1 && production.getBody().get(0).getValue().equals(EPS)
+                ) {
+                    sentence.removeIf(
+                            grammarSymbol -> grammarSymbol.equals(head.get(0))
+                    );
+                }
+            }
+
+            // Remove symbols generating into blanks
+            sentence.removeIf(
+                    grammarSymbol -> grammarSymbol.equals(epsBlankSym)
+            );
+
+            return Optional.of(sentence.size());
+        } else {
+            return Optional.empty();
         }
     }
 }
