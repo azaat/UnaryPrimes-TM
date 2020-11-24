@@ -114,13 +114,6 @@ public class WordUtils {
         return false;
     }
 
-    /**
-     *
-     * @param sentence
-     * @param productions
-     * @param finalState
-     * @return Count of symbols if has final, otherwise empty
-     */
     private static Optional<Integer> getWordSizeIfHasFinal(List<GrammarSymbol> sentence, List<Production> productions, TuringMachine.State finalState) {
         // Hacky optimization to accept word when encountered final state
         // without opening all the variables with BFS
@@ -145,6 +138,8 @@ public class WordUtils {
                     grammarSymbol -> grammarSymbol.equals(epsBlankSym)
             );
 
+            return Optional.of(sentence.size());
+        } else if (sentence.stream().anyMatch(s -> s.getValue().contains(finalState.getValue()))) {
             return Optional.of(sentence.size());
         } else {
             return Optional.empty();
