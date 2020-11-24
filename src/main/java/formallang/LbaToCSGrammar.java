@@ -153,6 +153,36 @@ public class LbaToCSGrammar {
                                             List.of(createSymbol(x, a, q.getValue(), R)),
                                             List.of(createSymbol(p.getValue(), x, a, R))
                                     ));
+                                } else if (
+                                        ctx.getTapeSym().equals(L)
+                                                && y.equals(L)
+                                                && trans.getDirection().equals(Direction.STAY)
+                                ) {
+                                    // stay on left side
+                                    productions.add(new Production(
+                                            List.of(createSymbol(q.getValue(), L, x, a)),
+                                            List.of(createSymbol(p.getValue(), L, x, a))
+                                    ));
+                                }
+                                else if (
+                                        ctx.getTapeSym().equals(R)
+                                                && y.equals(R)
+                                                && trans.getDirection().equals(Direction.STAY)
+                                ) {
+                                    // stay on right side
+                                    productions.add(new Production(
+                                            List.of(createSymbol(x, a, q.getValue(), R)),
+                                            List.of(createSymbol(x, a, p.getValue(), R))
+                                    ));
+                                } else if (
+                                        ctx.getTapeSym().equals(x)
+                                                && trans.getDirection().equals(Direction.STAY)
+                                ) {
+                                    // stay in middle
+                                    productions.add(new Production(
+                                            List.of(createSymbol(q.getValue(), x, a)),
+                                            List.of(createSymbol(p.getValue(), y, a))
+                                    ));
                                 }
                             }
                         }
