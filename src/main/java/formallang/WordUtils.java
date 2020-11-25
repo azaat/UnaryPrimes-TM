@@ -2,6 +2,7 @@ package formallang;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static formallang.TmToUnrestrictedGrammar.BLANK;
 import static formallang.TmToUnrestrictedGrammar.EPS;
@@ -9,7 +10,11 @@ import static formallang.UnrestrictedGrammar.GrammarSymbol;
 import static formallang.UnrestrictedGrammar.Production;
 
 public class WordUtils {
-    public static boolean contains(UnrestrictedGrammar grammar, int n, Set<TuringMachine.State> finalStates) {
+    public static Optional<List<List<GrammarSymbol>>> contains(UnrestrictedGrammar grammar, int n, Set<TuringMachine.State> finalStates) {
+        return contains(grammar, n, finalStates, false);
+    }
+
+    public static Optional<List<List<GrammarSymbol>>> contains(UnrestrictedGrammar grammar, int n, Set<TuringMachine.State> finalStates, boolean neatDerivation) {
         List<Production> productions = grammar.getProductions().stream().sorted(
                 Comparator.comparingInt(p -> p.getBody().size())
         ).collect(Collectors.toList());
@@ -17,12 +22,16 @@ public class WordUtils {
         final class Node {
             final int depth;
             final List<GrammarSymbol> sentence;
-            private Node(
+            final List<List<GrammarSymbol>> derivation;
+
+            Node(
                     List<GrammarSymbol> sentence,
-                    int depth
+                    int depth,
+                    List<List<GrammarSymbol>> derivation
             ) {
                 this.sentence = sentence;
                 this.depth = depth;
+                this.derivation = derivation;
             }
         }
 
@@ -33,29 +42,29 @@ public class WordUtils {
 
         LinkedList<Node> queue = new LinkedList<>();
         Set<List<GrammarSymbol>> visited = new HashSet<>();
-        queue.add(new Node(List.of(grammar.getStartSymbol()), 0));
+        queue.add(new Node(List.of(grammar.getStartSymbol()), 0, List.of(List.of(grammar.getStartSymbol()))));
 
         while (!queue.isEmpty()) {
             Node node = queue.poll();
             List<GrammarSymbol> sentence = node.sentence;
-
             boolean foundFinal = false;
-            for (TuringMachine.State finalState : finalStates) {
-                // Hacky optimization to accept word when encountered final state
-                // without opening all the variables with BFS
-                Optional<Integer> optWordSize = getWordSizeIfHasFinal(sentence, productions, finalState);
-                if (optWordSize.isPresent()) {
-                    int wordSize = optWordSize.get();
 
-                    if (wordSize == n) {
-                        System.out.println("Found match " + sentence + " len: " + sentence.size());
-                        return true;
-                    } else if (wordSize > n) {
-                        System.out.println("Did not find any match");
-                        return false;
+            if (neatDerivation) {
+                for (TuringMachine.State finalState : finalStates) {
+                    Optional<Integer> optWordSize = getWordSizeIfHasFinal(sentence, productions, finalState);
+                    if (optWordSize.isPresent()) {
+                        int wordSize = optWordSize.get();
+
+                        if (wordSize == n) {
+                            System.out.println("Found match " + sentence + " len: " + sentence.size());
+                            return Optional.of(node.derivation);
+                        } else if (wordSize > n) {
+                            System.out.println("Did not find any match");
+                            return Optional.empty();
+                        }
+
+                        foundFinal = true;
                     }
-
-                    foundFinal = true;
                 }
             }
 
@@ -67,13 +76,15 @@ public class WordUtils {
                     // If we encountered sentence with final state we don't open it up further
                     continue;
                 }
-                /*if (sentence.stream().allMatch(
+
+                if (sentence.stream().allMatch(
                         GrammarSymbol::isTerminal
                 )) {
                     // All terminals, generated word
-                    if (sentence.size() >= n) return true;
+                    if (sentence.size() > n) return Optional.empty();
+                    else if (sentence.size() == n) return Optional.of(node.derivation);
                     System.out.println("Generated " + sentence + " depth: " + node.depth);
-                }*/
+                }
 
                 for (int pos = 0; pos < sentence.size(); pos++) {
                     int limit = optMaxHead.orElse(sentence.size() - pos);
@@ -100,8 +111,10 @@ public class WordUtils {
                                 List<GrammarSymbol> newSentence = new LinkedList<>(start);
                                 newSentence.addAll(bodyNoEps);
                                 newSentence.addAll(end);
+
                                 queue.add(new Node(
-                                        newSentence, node.depth + 1
+                                        newSentence, node.depth + 1, Stream.concat(node.derivation.stream(), Stream.of(newSentence))
+                                            .collect(Collectors.toList())
                                 ));
                             }
                         }
@@ -111,7 +124,7 @@ public class WordUtils {
         }
 
         // Exited loop without returning, so we did not find accepting sentence
-        return false;
+        return Optional.empty();
     }
 
     private static Optional<Integer> getWordSizeIfHasFinal(List<GrammarSymbol> sentence, List<Production> productions, TuringMachine.State finalState) {
