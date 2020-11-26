@@ -12,7 +12,7 @@ import static formallang.UnrestrictedGrammar.Production;
 public class WordUtils {
     public static final GrammarSymbol epsBlankSym = new GrammarSymbol("[" + EPS + "|" + BLANK + "]", false);
 
-    public static boolean isHieroglyph(GrammarSymbol sym) {
+    public static boolean isWordHieroglyph(GrammarSymbol sym) {
         return sym.getValue().contains("[") && !sym.getValue().equals(epsBlankSym.getValue());
     }
 
@@ -62,10 +62,10 @@ public class WordUtils {
                         int wordSize = optWordSize.get();
 
                         if (wordSize == n) {
-                            System.out.println("Found match " + sentence + " len: " + sentence.size());
+                            //System.out.println("Found match " + sentence + " len: " + sentence.size());
                             return Optional.of(node.derivation);
                         } else if (wordSize > n) {
-                            System.out.println("Did not find any match");
+                            //System.out.println("Did not find any match");
                             return Optional.empty();
                         }
 
@@ -78,20 +78,20 @@ public class WordUtils {
                 visited.add(sentence);
 
                 if (foundFinal) {
-                    System.out.println("Sent with final state " + sentence + " len: " + sentence.size());
+                    //System.out.println("Sent with final state " + sentence + " len: " + sentence.size());
                     // If we encountered sentence with final state we don't open it up further
                     continue;
                 }
 
                 if (sentence.stream().filter(
-                        WordUtils::isHieroglyph
+                        WordUtils::isWordHieroglyph
                 ).count() > n) {
                     // Encountered more than n hieroglyphs, should not open up further
                     //System.out.println("Sent with more than n hieroglyphs, skipping..");
                     continue;
                 }
 
-                if (sentence.stream().allMatch(
+                if ( needDerivation && sentence.stream().allMatch(
                         GrammarSymbol::isTerminal
                 )) {
                     // All terminals, generated word

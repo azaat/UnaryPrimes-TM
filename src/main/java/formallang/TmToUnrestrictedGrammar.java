@@ -52,8 +52,8 @@ public class TmToUnrestrictedGrammar {
         Set<Production> productions = new HashSet<>(Arrays.asList(
                 new Production(List.of(s), List.of(s1, q0, s2), Production.Type.TAPE_GENERATING),
                 new Production(List.of(s2), List.of(s3), Production.Type.TAPE_GENERATING),
-                new Production(List.of(s1), List.of(s1, new GrammarSymbol("[" + EPS + "|" + BLANK + "]", false)), Production.Type.TAPE_GENERATING),
-                new Production(List.of(s3), List.of(new GrammarSymbol("[" + EPS + "|" + BLANK + "]", false), s3), Production.Type.TAPE_GENERATING),
+                new Production(List.of(s1), List.of(new GrammarSymbol("[" + EPS + "|" + BLANK + "]", false)), Production.Type.TAPE_GENERATING),
+                new Production(List.of(s3), List.of(new GrammarSymbol("[" + EPS + "|" + BLANK + "]", false)), Production.Type.TAPE_GENERATING),
                 new Production(List.of(s1), List.of(new GrammarSymbol(EPS, false)), Production.Type.TAPE_GENERATING),
                 new Production(List.of(s3), List.of(new GrammarSymbol(EPS, false)), Production.Type.TAPE_GENERATING)
         ));
