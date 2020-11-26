@@ -68,12 +68,20 @@ public class UnrestrictedGrammar {
     }
 
     public static class Production {
+        public enum Type {
+            TAPE_GENERATING,
+            TM_EMULATING,
+            WORD_RESTORING
+        }
+
         private final List<GrammarSymbol> head;
         private final List<GrammarSymbol> body;
+        private final Type type;
 
-        public Production(List<GrammarSymbol> head, List<GrammarSymbol> body) {
+        public Production(List<GrammarSymbol> head, List<GrammarSymbol> body, Type type) {
             this.head = head;
             this.body = body;
+            this.type = type;
         }
 
         public List<GrammarSymbol> getHead() {
@@ -82,6 +90,10 @@ public class UnrestrictedGrammar {
 
         public List<GrammarSymbol> getBody() {
             return body;
+        }
+
+        public Type getType() {
+            return type;
         }
 
         @Override
