@@ -10,6 +10,12 @@ import static formallang.UnrestrictedGrammar.GrammarSymbol;
 import static formallang.UnrestrictedGrammar.Production;
 
 public class WordUtils {
+    public static final GrammarSymbol epsBlankSym = new GrammarSymbol("[" + EPS + "|" + BLANK + "]", false);
+
+    public static boolean isHieroglyph(GrammarSymbol sym) {
+        return sym.getValue().contains("[") && !sym.getValue().equals(epsBlankSym.getValue());
+    }
+
     public static Optional<List<Production>> contains(UnrestrictedGrammar grammar, int n, Set<TuringMachine.State> finalStates) {
         return contains(grammar, n, finalStates, false);
     }
@@ -77,6 +83,14 @@ public class WordUtils {
                     continue;
                 }
 
+                if (sentence.stream().filter(
+                        WordUtils::isHieroglyph
+                ).count() > n) {
+                    // Encountered more than n hieroglyphs, should not open up further
+                    //System.out.println("Sent with more than n hieroglyphs, skipping..");
+                    continue;
+                }
+
                 if (sentence.stream().allMatch(
                         GrammarSymbol::isTerminal
                 )) {
@@ -85,6 +99,7 @@ public class WordUtils {
                     else if (sentence.size() == n) return Optional.of(node.derivation);
                     System.out.println("Generated " + sentence + " depth: " + node.depth);
                 }
+
 
                 for (int pos = 0; pos < sentence.size(); pos++) {
                     int limit = optMaxHead.orElse(sentence.size() - pos);
@@ -131,7 +146,6 @@ public class WordUtils {
         // Hacky optimization to accept word when encountered final state
         // without opening all the variables with BFS
         if (sentence.contains(new GrammarSymbol(finalState.getValue(), false))) {
-            GrammarSymbol epsBlankSym = new GrammarSymbol("[" + EPS + "|" + BLANK + "]", false);
 
             // Apply eps productions
             for (Production production : productions) {
