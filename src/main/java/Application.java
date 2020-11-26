@@ -1,11 +1,14 @@
 import formallang.*;
+import utils.GrammarUtils;
 import utils.TuringMachineUtils;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static formallang.UnrestrictedGrammar.*;
 
@@ -24,16 +27,33 @@ public class Application {
 
             UnrestrictedGrammar grammar = LbaToCSGrammar.convert(tm);
             System.out.println(grammar.getProductions().size() + " productions");
-            System.out.println(WordUtils.contains(grammar, 4, tm.getFinalStates()));
+//            if (WordUtils.contains(grammar, 8, tm.getFinalStates()).isPresent()) {
+//                System.out.println(true);
+//            };
 
-            Optional<List<List<GrammarSymbol>>> result = WordUtils.contains(grammar, 3, tm.getFinalStates());
-            result.ifPresent(
-                    derivation -> {
-                        for (var sentence : derivation) {
-                            System.out.println(sentence);
-                        }
-                    }
+
+            Set<Production> usedProds = new HashSet<>();
+            for (var i = 2; i < 8; i++) {
+                Optional<List<Production>> result = WordUtils.contains(grammar, i, tm.getFinalStates(), false);
+                result.ifPresent(
+                        derivation -> derivation.forEach(
+                                production -> {
+                                    if (production.getType().equals(Production.Type.TM_EMULATING)) {
+                                        usedProds.add(production);
+                                    }
+                                }
+                        )
+                );
+            }
+
+            grammar.getProductions().removeIf(
+                    production ->
+                            production.getType().equals(Production.Type.TM_EMULATING)
+                                    && !usedProds.contains(production)
             );
+
+            GrammarUtils.storeGrammar(grammar, "lba_grammar.txt");
+
         } catch (IOException e) {
             e.printStackTrace();
         }

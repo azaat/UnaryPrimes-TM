@@ -10,11 +10,11 @@ import static formallang.UnrestrictedGrammar.GrammarSymbol;
 import static formallang.UnrestrictedGrammar.Production;
 
 public class WordUtils {
-    public static Optional<List<List<GrammarSymbol>>> contains(UnrestrictedGrammar grammar, int n, Set<TuringMachine.State> finalStates) {
+    public static Optional<List<Production>> contains(UnrestrictedGrammar grammar, int n, Set<TuringMachine.State> finalStates) {
         return contains(grammar, n, finalStates, false);
     }
 
-    public static Optional<List<List<GrammarSymbol>>> contains(UnrestrictedGrammar grammar, int n, Set<TuringMachine.State> finalStates, boolean neatDerivation) {
+    public static Optional<List<Production>> contains(UnrestrictedGrammar grammar, int n, Set<TuringMachine.State> finalStates, boolean needDerivation) {
         List<Production> productions = grammar.getProductions().stream().sorted(
                 Comparator.comparingInt(p -> p.getBody().size())
         ).collect(Collectors.toList());
@@ -22,12 +22,12 @@ public class WordUtils {
         final class Node {
             final int depth;
             final List<GrammarSymbol> sentence;
-            final List<List<GrammarSymbol>> derivation;
+            final List<Production> derivation;
 
             Node(
                     List<GrammarSymbol> sentence,
                     int depth,
-                    List<List<GrammarSymbol>> derivation
+                    List<Production> derivation
             ) {
                 this.sentence = sentence;
                 this.depth = depth;
@@ -42,14 +42,14 @@ public class WordUtils {
 
         LinkedList<Node> queue = new LinkedList<>();
         Set<List<GrammarSymbol>> visited = new HashSet<>();
-        queue.add(new Node(List.of(grammar.getStartSymbol()), 0, List.of(List.of(grammar.getStartSymbol()))));
+        queue.add(new Node(List.of(grammar.getStartSymbol()), 0, new LinkedList<>()));
 
         while (!queue.isEmpty()) {
             Node node = queue.poll();
             List<GrammarSymbol> sentence = node.sentence;
             boolean foundFinal = false;
 
-            if (neatDerivation) {
+            if (!needDerivation) {
                 for (TuringMachine.State finalState : finalStates) {
                     Optional<Integer> optWordSize = getWordSizeIfHasFinal(sentence, productions, finalState);
                     if (optWordSize.isPresent()) {
@@ -113,7 +113,7 @@ public class WordUtils {
                                 newSentence.addAll(end);
 
                                 queue.add(new Node(
-                                        newSentence, node.depth + 1, Stream.concat(node.derivation.stream(), Stream.of(newSentence))
+                                        newSentence, node.depth + 1, Stream.concat(node.derivation.stream(), Stream.of(production))
                                             .collect(Collectors.toList())
                                 ));
                             }

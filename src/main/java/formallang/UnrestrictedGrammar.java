@@ -109,6 +109,11 @@ public class UnrestrictedGrammar {
         public int hashCode() {
             return Objects.hash(head, body);
         }
+
+        @Override
+        public String toString() {
+            return head.toString() + " -> " + body.toString();
+        }
     }
 
     public static class GrammarSymbol {

@@ -18,7 +18,7 @@ import static formallang.TuringMachine.Transition.Direction;
 import static formallang.UnrestrictedGrammar.Production.Type;
 
 public class LbaToCSGrammar {
-    private static final String L = "c";
+    private static final String L = "%";
     private static final String R = "$";
     //private static final Set<String> ALPHABET = Set.of("0", "1");
     private static final Set<String> ALPHABET = Set.of("1");
