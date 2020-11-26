@@ -57,8 +57,10 @@ public class GrammarUtils {
         GrammarSymbol b = new GrammarSymbol("b", true);
         GrammarSymbol eps = new GrammarSymbol("eps", true);
 
-        Production prod1 = new Production(List.of(startSymb), List.of(startSymb, a, startSymb, b));
-        Production prod2 = new Production(List.of(startSymb), List.of(eps));
+        Production prod1 = new Production(List.of(startSymb), List.of(startSymb, a, startSymb, b),
+                Production.Type.WORD_RESTORING);
+        Production prod2 = new Production(List.of(startSymb), List.of(eps),
+                Production.Type.WORD_RESTORING);
 
         UnrestrictedGrammar grammar = new UnrestrictedGrammar(
                 Set.of(a, b, eps),
