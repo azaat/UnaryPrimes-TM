@@ -48,13 +48,14 @@ public class TmToUnrestrictedGrammar {
 
         GrammarSymbol q0 = new GrammarSymbol(tm.getInitialState().getValue(), false);
 
+        // Generating productions
         Set<Production> productions = new HashSet<>(Arrays.asList(
-                new Production(List.of(s), List.of(s1, q0, s2)),
-                new Production(List.of(s2), List.of(s3)),
-                new Production(List.of(s1), List.of(s1, new GrammarSymbol("[" + EPS + "|" + BLANK + "]", false))),
-                new Production(List.of(s3), List.of(new GrammarSymbol("[" + EPS + "|" + BLANK + "]", false), s3)),
-                new Production(List.of(s1), List.of(new GrammarSymbol(EPS, false))),
-                new Production(List.of(s3), List.of(new GrammarSymbol(EPS, false)))
+                new Production(List.of(s), List.of(s1, q0, s2), Production.Type.TAPE_GENERATING),
+                new Production(List.of(s2), List.of(s3), Production.Type.TAPE_GENERATING),
+                new Production(List.of(s1), List.of(s1, new GrammarSymbol("[" + EPS + "|" + BLANK + "]", false)), Production.Type.TAPE_GENERATING),
+                new Production(List.of(s3), List.of(new GrammarSymbol("[" + EPS + "|" + BLANK + "]", false), s3), Production.Type.TAPE_GENERATING),
+                new Production(List.of(s1), List.of(new GrammarSymbol(EPS, false)), Production.Type.TAPE_GENERATING),
+                new Production(List.of(s3), List.of(new GrammarSymbol(EPS, false)), Production.Type.TAPE_GENERATING)
         ));
 
         for (String sym : SIGMA) {
@@ -64,7 +65,8 @@ public class TmToUnrestrictedGrammar {
                             List.of(
                                     new GrammarSymbol("[" + sym + "|" + sym + "]", false),
                                     s2
-                            )
+                            ),
+                            Production.Type.TAPE_GENERATING
                     )
             );
         }
@@ -90,19 +92,19 @@ public class TmToUnrestrictedGrammar {
 
                                 head = List.of(contextLeftSym, stateFromSym, contextSym);
                                 body = List.of(stateToSym, contextLeftSym, contextToSym);
-                                productions.add(new Production(head, body));
+                                productions.add(new Production(head, body, Production.Type.TM_EMULATING));
                             }
                         }
                         break;
                     case STAY:
                         head = List.of(stateFromSym, contextSym);
                         body = List.of(stateToSym, contextToSym);
-                        productions.add(new Production(head, body));
+                        productions.add(new Production(head, body, Production.Type.TM_EMULATING));
                         break;
                     case RIGHT:
                         head = List.of(stateFromSym, contextSym);
                         body = List.of(contextToSym, stateToSym);
-                        productions.add(new Production(head, body));
+                        productions.add(new Production(head, body, Production.Type.TM_EMULATING));
                         break;
                 }
             }
@@ -120,16 +122,16 @@ public class TmToUnrestrictedGrammar {
                     GrammarSymbol contextSym = new GrammarSymbol("[" + aVal + "|" + cVal + "]", false);
                     head = List.of(contextSym, qSym);
                     body = List.of(qSym, aSym, qSym);
-                    productions.add(new Production(head, body));
+                    productions.add(new Production(head, body, Production.Type.WORD_RESTORING));
 
                     head = List.of(qSym, contextSym);
-                    productions.add(new Production(head, body));
+                    productions.add(new Production(head, body, Production.Type.WORD_RESTORING));
                 }
             }
 
             head = List.of(qSym);
             body = List.of(new GrammarSymbol(EPS, true));
-            productions.add(new Production(head, body));
+            productions.add(new Production(head, body, Production.Type.WORD_RESTORING));
         }
         return new UnrestrictedGrammar(terminals, variables, productions, s);
     }
