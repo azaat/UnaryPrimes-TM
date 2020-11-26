@@ -1,9 +1,6 @@
 package formallang;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 public class UnrestrictedGrammar {
     private final Set<GrammarSymbol> terminals;
@@ -27,8 +24,8 @@ public class UnrestrictedGrammar {
         this.productions = productions;
         this.startSymbol = startSymbol;
 
-        Set<GrammarSymbol> terminals = new HashSet<>();
-        Set<GrammarSymbol> variables = new HashSet<>();
+        Set<GrammarSymbol> terminals = new LinkedHashSet<>();
+        Set<GrammarSymbol> variables = new LinkedHashSet<>();
 
         for (var prod : productions) {
             for (var sym : prod.getHead()) {
