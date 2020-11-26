@@ -78,6 +78,12 @@ public class UnrestrictedGrammar {
         private final List<GrammarSymbol> body;
         private final Type type;
 
+        public Production(List<GrammarSymbol> head, List<GrammarSymbol> body) {
+            this.head = head;
+            this.body = body;
+            this.type = Type.WORD_RESTORING;
+        }
+
         public Production(List<GrammarSymbol> head, List<GrammarSymbol> body, Type type) {
             this.head = head;
             this.body = body;
