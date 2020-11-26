@@ -10,11 +10,52 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static formallang.UnrestrictedGrammar.GrammarSymbol;
 import static formallang.UnrestrictedGrammar.Production;
 
 public class GrammarUtils {
+    public static UnrestrictedGrammar renameVariables(UnrestrictedGrammar grammar) {
+        Set<Production> newProductions = new LinkedHashSet<>();
+
+        Map<String, String> newNames = new HashMap<>();
+        int cnt = 0;
+        for (var variable : grammar.getVariables()) {
+            newNames.put(variable.getValue(), "S"+ cnt++);
+        }
+
+        for (var production: grammar.getProductions()) {
+            List<GrammarSymbol> head = production.getHead().stream()
+                    .map(s -> {
+                        if (s.isTerminal()) {
+                            return s;
+                        } else {
+                            return new GrammarSymbol(newNames.get(s.getValue()), false);
+                        }
+                    })
+                    .collect(Collectors.toList());
+
+            List<GrammarSymbol> body = production.getBody().stream()
+                    .map(s -> {
+                        if (s.isTerminal()) {
+                            return s;
+                        } else {
+                            return new GrammarSymbol(newNames.get(s.getValue()), false);
+                        }
+                    })
+                    .collect(Collectors.toList());
+
+            newProductions.add(new Production(head, body, production.getType()));
+        }
+
+        GrammarSymbol newStartSymbol = new GrammarSymbol(
+                newNames.get(grammar.getStartSymbol().getValue()), false
+        );
+
+        return new UnrestrictedGrammar(newProductions, newStartSymbol);
+    }
+
     public static UnrestrictedGrammar loadGrammar(Path path) throws Exception {
         BufferedReader reader = Files.newBufferedReader(path);
         Set<Production> productions = new LinkedHashSet<>();
@@ -105,6 +146,7 @@ public class GrammarUtils {
         GrammarUtils.storeGrammar(grammar, "src/main/resources/test_grammar.txt");
 
         UnrestrictedGrammar g = GrammarUtils.loadGrammar(Paths.get("lba_grammar.txt"));
+        g = GrammarUtils.renameVariables(g);
 
         System.out.println(g.getStartSymbol());
         System.out.println(g.getTerminals());
