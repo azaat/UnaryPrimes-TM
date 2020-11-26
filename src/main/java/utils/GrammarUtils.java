@@ -1,6 +1,8 @@
 package utils;
 
+import formallang.TuringMachine;
 import formallang.UnrestrictedGrammar;
+import formallang.WordUtils;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -84,6 +86,33 @@ public class GrammarUtils {
         }
 
         return grammarPath;
+    }
+
+    public static UnrestrictedGrammar optimize(UnrestrictedGrammar grammar, int depth, Set<TuringMachine.State> finalStates) {
+        Set<Production> usedProds = new HashSet<>();
+        for (int i = 0; i < depth; i++) {
+            Optional<List<Production>> result = WordUtils.contains(grammar, i, finalStates, false);
+
+            result.ifPresent(
+                    derivation -> derivation.forEach(
+                            production -> {
+                                if (production.getType().equals(Production.Type.TM_EMULATING)) {
+                                    usedProds.add(production);
+                                }
+                            }
+                    )
+            );
+        }
+        HashSet<Production> newProductions = new HashSet<>(grammar.getProductions());
+        newProductions.removeIf(
+                production ->
+                        production.getType().equals(Production.Type.TM_EMULATING)
+                                && !usedProds.contains(production)
+        );
+        return new UnrestrictedGrammar(
+                grammar.getTerminals(), grammar.getVariables(), newProductions, grammar.getStartSymbol()
+        );
+
     }
 
     public static void main(String[] args) throws Exception {
