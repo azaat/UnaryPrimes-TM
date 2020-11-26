@@ -15,6 +15,7 @@ import static formallang.TuringMachine.State;
 import static formallang.TuringMachine.TransitionContext;
 import static formallang.TuringMachine.Transition;
 import static formallang.TuringMachine.Transition.Direction;
+import static formallang.UnrestrictedGrammar.Production.Type;
 
 public class LbaToCSGrammar {
     private static final String L = "c";
@@ -37,15 +38,18 @@ public class LbaToCSGrammar {
             String a = aSym.getValue();
             // 4.1
             productions.add(new Production(
-                    List.of(a1), List.of(createSymbol(init.getValue(), L, a, a), a2)
+                    List.of(a1), List.of(createSymbol(init.getValue(), L, a, a), a2),
+                    Type.TAPE_GENERATING
             ));
             // 4.2
             productions.add(new Production(
-                    List.of(a2), List.of(createSymbol(a, a), a2)
+                    List.of(a2), List.of(createSymbol(a, a), a2),
+                    Type.TAPE_GENERATING
             ));
             // 4.3
             productions.add(new Production(
-                    List.of(a2), List.of(createSymbol(a, a, R))
+                    List.of(a2), List.of(createSymbol(a, a, R)),
+                    Type.TAPE_GENERATING
             ));
         }
 
@@ -83,7 +87,8 @@ public class LbaToCSGrammar {
                                     // 5.1
                                     productions.add(new Production(
                                             List.of(createSymbol(q.getValue(), L, x, a)),
-                                            List.of(createSymbol(L, p.getValue(), x, a))
+                                            List.of(createSymbol(L, p.getValue(), x, a)),
+                                            Type.TM_EMULATING
                                     ));
                                 } else if (
                                         ctx.getTapeSym().equals(x)
@@ -92,27 +97,32 @@ public class LbaToCSGrammar {
                                     // 5.2
                                     productions.add(new Production(
                                             List.of(createSymbol(L, q.getValue(), x, a)),
-                                            List.of(createSymbol(p.getValue(), L, y, a))
+                                            List.of(createSymbol(p.getValue(), L, y, a)),
+                                            Type.TM_EMULATING
                                     ));
                                     // 6.2
                                     productions.add(new Production(
                                             List.of(createSymbol(z, b), createSymbol(q.getValue(), x, a)),
-                                            List.of(createSymbol(p.getValue(), z, b), createSymbol(y, a))
+                                            List.of(createSymbol(p.getValue(), z, b), createSymbol(y, a)),
+                                            Type.TM_EMULATING
                                     ));
                                     // 6.4
                                     productions.add(new Production(
                                             List.of(createSymbol(L, z, b), createSymbol(q.getValue(), x, a)),
-                                            List.of(createSymbol(L, p.getValue(), z, b), createSymbol(y, a))
+                                            List.of(createSymbol(L, p.getValue(), z, b), createSymbol(y, a)),
+                                            Type.TM_EMULATING
                                     ));
                                     // 7.3
                                     productions.add(new Production(
                                             List.of(createSymbol(z, b), createSymbol(q.getValue(), x, a, R)),
-                                            List.of(createSymbol(p.getValue(), z, b), createSymbol(y, a, R))
+                                            List.of(createSymbol(p.getValue(), z, b), createSymbol(y, a, R)),
+                                            Type.TM_EMULATING
                                     ));
                                     // this production should be in case |w|=2
                                     productions.add(new Production(
                                             List.of(createSymbol(L, z, b), createSymbol(q.getValue(), x, a, R)),
-                                            List.of(createSymbol(L, p.getValue(), z, b), createSymbol(y, a, R))
+                                            List.of(createSymbol(L, p.getValue(), z, b), createSymbol(y, a, R)),
+                                            Type.TM_EMULATING
                                     ));
                                 } else if (
                                         ctx.getTapeSym().equals(x)
@@ -121,27 +131,32 @@ public class LbaToCSGrammar {
                                     // 5.3
                                     productions.add(new Production(
                                             List.of(createSymbol(L, q.getValue(), x, a), createSymbol(z, b)),
-                                            List.of(createSymbol(L, y, a), createSymbol(p.getValue(), z, b))
+                                            List.of(createSymbol(L, y, a), createSymbol(p.getValue(), z, b)),
+                                            Type.TM_EMULATING
                                     ));
                                     // this production should be in case |w|=2
                                     productions.add(new Production(
                                             List.of(createSymbol(L, q.getValue(), x, a), createSymbol(z, b, R)),
-                                            List.of(createSymbol(L, y, a), createSymbol(p.getValue(), z, b, R))
+                                            List.of(createSymbol(L, y, a), createSymbol(p.getValue(), z, b, R)),
+                                            Type.TM_EMULATING
                                     ));
                                     // 6.1
                                     productions.add(new Production(
                                             List.of(createSymbol(q.getValue(), x, a), createSymbol(z, b)),
-                                            List.of(createSymbol(y, a), createSymbol(p.getValue(), z, b))
+                                            List.of(createSymbol(y, a), createSymbol(p.getValue(), z, b)),
+                                            Type.TM_EMULATING
                                     ));
                                     // 6.3
                                     productions.add(new Production(
                                             List.of(createSymbol(q.getValue(), x, a), createSymbol(z, b, R)),
-                                            List.of(createSymbol(y, a), createSymbol(p.getValue(), z, b, R))
+                                            List.of(createSymbol(y, a), createSymbol(p.getValue(), z, b, R)),
+                                            Type.TM_EMULATING
                                     ));
                                     // 7.1
                                     productions.add(new Production(
                                             List.of(createSymbol(q.getValue(), x, a, R)),
-                                            List.of(createSymbol(y, a, p.getValue(), R))
+                                            List.of(createSymbol(y, a, p.getValue(), R)),
+                                            Type.TM_EMULATING
                                     ));
                                 } else if (
                                         ctx.getTapeSym().equals(R)
@@ -151,7 +166,8 @@ public class LbaToCSGrammar {
                                     // 7.2
                                     productions.add(new Production(
                                             List.of(createSymbol(x, a, q.getValue(), R)),
-                                            List.of(createSymbol(p.getValue(), x, a, R))
+                                            List.of(createSymbol(p.getValue(), x, a, R)),
+                                            Type.TM_EMULATING
                                     ));
                                 } else if (
                                         ctx.getTapeSym().equals(L)
@@ -161,7 +177,8 @@ public class LbaToCSGrammar {
                                     // stay on left side
                                     productions.add(new Production(
                                             List.of(createSymbol(q.getValue(), L, x, a)),
-                                            List.of(createSymbol(p.getValue(), L, x, a))
+                                            List.of(createSymbol(p.getValue(), L, x, a)),
+                                            Type.TM_EMULATING
                                     ));
                                 }
                                 else if (
@@ -172,7 +189,8 @@ public class LbaToCSGrammar {
                                     // stay on right side
                                     productions.add(new Production(
                                             List.of(createSymbol(x, a, q.getValue(), R)),
-                                            List.of(createSymbol(x, a, p.getValue(), R))
+                                            List.of(createSymbol(x, a, p.getValue(), R)),
+                                            Type.TM_EMULATING
                                     ));
                                 } else if (
                                         ctx.getTapeSym().equals(x)
@@ -181,7 +199,8 @@ public class LbaToCSGrammar {
                                     // stay in middle
                                     productions.add(new Production(
                                             List.of(createSymbol(q.getValue(), x, a)),
-                                            List.of(createSymbol(p.getValue(), y, a))
+                                            List.of(createSymbol(p.getValue(), y, a)),
+                                            Type.TM_EMULATING
                                     ));
                                 }
                             }
@@ -198,27 +217,32 @@ public class LbaToCSGrammar {
                     // 8.1
                     productions.add(new Production(
                             List.of(createSymbol(q.getValue(), L, x, a)),
-                            List.of(aSym)
+                            List.of(aSym),
+                            Type.WORD_RESTORING
                     ));
                     // 8.2
                     productions.add(new Production(
                             List.of(createSymbol(L, q.getValue(), x, a)),
-                            List.of(aSym)
+                            List.of(aSym),
+                            Type.WORD_RESTORING
                     ));
                     // 8.3
                     productions.add(new Production(
                             List.of(createSymbol(q.getValue(), x, a)),
-                            List.of(aSym)
+                            List.of(aSym),
+                            Type.WORD_RESTORING
                     ));
                     // 8.4
                     productions.add(new Production(
                             List.of(createSymbol(q.getValue(), x, a, R)),
-                            List.of(aSym)
+                            List.of(aSym),
+                            Type.WORD_RESTORING
                     ));
                     // 8.5
                     productions.add(new Production(
                             List.of(createSymbol(x, a, q.getValue(), R)),
-                            List.of(aSym)
+                            List.of(aSym),
+                            Type.WORD_RESTORING
                     ));
                 }
             }
@@ -233,22 +257,26 @@ public class LbaToCSGrammar {
                     // 9.1
                     productions.add(new Production(
                             List.of(aSym, createSymbol(x, b)),
-                            List.of(aSym, bSym)
+                            List.of(aSym, bSym),
+                            Type.WORD_RESTORING
                     ));
                     // 9.2
                     productions.add(new Production(
                             List.of(aSym, createSymbol(x, b)),
-                            List.of(aSym, bSym)
+                            List.of(aSym, bSym),
+                            Type.WORD_RESTORING
                     ));
                     // 9.3
                     productions.add(new Production(
                             List.of(createSymbol(x, a), bSym),
-                            List.of(aSym, bSym)
+                            List.of(aSym, bSym),
+                            Type.WORD_RESTORING
                     ));
                     // 9.4
                     productions.add(new Production(
                             List.of(createSymbol(L, x, a), bSym),
-                            List.of(aSym, bSym)
+                            List.of(aSym, bSym),
+                            Type.WORD_RESTORING
                     ));
                 }
             }
