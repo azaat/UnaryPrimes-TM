@@ -11,12 +11,39 @@ You can find final grammar files in [final_t0_grammar](./final_t0_grammar.txt) a
 ## Usage
 
 ```
--grammar [TYPE]:
-    t0 - select Type 0 grammar for unary primes
-    t1 - select Type 1 grammar for unary primes
--contains [NUMBER]
-    specify length of unary string you want to check
--derivation
-    optional flag, specifies whether you need to
-    output full derivation from start symbol
+Usage: Unary primes checker [-hV] [--derivation] --contains=<number>
+                            --grammar=<type>
+      --contains=<number>   Specify number to check if it is prime
+      --derivation          Show full derivation
+      --grammar=<type>      Specify grammar type: "t0" or "t1"
+  -h, --help                Show this help message and exit.
+  -V, --version             Print version information and exit.
+```
+
+## Examples
+
+##### Input:
+```
+--contains=7 --grammar=t1
+```
+##### Output:
+```
+7 is prime
+```
+
+##### Input:
+```
+--contains=5 --grammar=t0 --derivation
+```
+##### Output:
+```
+5 is prime
+Start symbol: S0
+Applied [S0] -> [S1, S2, S3], got [S1, S2, S3]
+Applied [S1] -> [S5], got [S5, S2, S3]
+Applied [S3] -> [S6, S3], got [S5, S2, S6, S3]
+...
+Applied [S27, S5] -> [S27, eps, S27], got [1, 1, 1, 1, 1, S27, S27]
+Applied [S27] -> [eps], got [1, 1, 1, 1, 1, S27]
+Applied [S27] -> [eps], got [1, 1, 1, 1, 1]
 ```
