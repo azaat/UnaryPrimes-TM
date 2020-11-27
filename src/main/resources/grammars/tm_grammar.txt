@@ -1,0 +1,71 @@
+Start symbol: S
+Terminals: 1 eps 
+
+S -> S1 init S2 
+S2 -> S3 
+S1 -> [eps|_] 
+S3 -> [eps|_] 
+S1 -> eps 
+S3 -> eps 
+S2 -> [1|1] S2 
+incDiv2 [1|1] -> [1|1] incDiv2 
+copy5 [1|1] -> [1|1] copy5 
+finishCopy1 [1|1] -> [1|#] finishCopy2 
+[1|1] copy6 [1|1] -> copy1 [1|1] [1|#] 
+copy2 [1|#] -> [1|1] copy3 
+copy3 [1|1] -> [1|#] copy4 
+[1|1] copy6 [1|#] -> copy1 [1|1] [1|#] 
+[1|#] copyDone3 [1|#] -> copy1 [1|#] [1|#] 
+[1|#] copyDone3 [1|1] -> copy1 [1|#] [1|#] 
+markSt [1|1] -> [1|#] incDiv1 
+copyDone2 [1|1] -> [1|#] copyDone3 
+incDiv1 [1|1] -> [1|1] incDiv1 
+copy5 [1|#] -> [1|1] copy6 
+incDiv3 [1|1] -> [1|#] markDiv 
+init [1|1] -> [1|#] checkInit 
+finishCopy3 [1|1] -> [1|#] copyDone1 
+incDiv2 [1|#] -> [1|1] incDiv3 
+[1|1] moveLeft [1|1] -> moveLeft [1|1] [1|1] 
+[1|#] moveLeft [1|1] -> moveLeft [1|#] [1|1] 
+[eps|_] moveLeft [1|1] -> moveLeft [eps|_] [1|1] 
+[1|1] moveLeft [1|#] -> moveLeft [1|1] [1|#] 
+[1|#] moveLeft [1|#] -> moveLeft [1|#] [1|#] 
+[eps|_] moveLeft [1|#] -> moveLeft [eps|_] [1|#] 
+checkInit [1|1] -> [1|#] markDiv 
+[1|1] copy1 [1|#] -> copy2 [1|1] [1|#] 
+[1|#] copy1 [1|#] -> copy2 [1|#] [1|#] 
+[1|#] markDiv [1|#] -> copy1 [1|#] [1|#] 
+[1|1] copy3 [1|#] -> finishCopy1 [1|1] [1|#] 
+copy4 [1|1] -> [1|1] copy4 
+finishCopy3 [1|#] -> [1|#] copyDone2 
+incDiv3 [1|#] -> [1|#] markDiv 
+markSt [1|#] -> [1|#] incDiv2 
+[1|#] markDiv [1|1] -> copy1 [1|#] [1|#] 
+copyDone1 [1|#] -> [1|1] copyDone2 
+incDiv1 [1|#] -> [1|1] incDiv2 
+copyDone1 [1|1] -> [1|1] copyDone1 
+[1|1] copy1 [1|1] -> copy1 [1|1] [1|1] 
+[1|#] copy1 [1|1] -> copy1 [1|#] [1|1] 
+finishCopy2 [1|#] -> [1|#] finishCopy3 
+copy4 [1|#] -> [1|#] copy5 
+copyDone2 [1|#] -> [1|#] copyDone3 
+[1|1] copy2 [1|1] -> copy2 [1|1] [1|1] 
+[1|#] copy2 [1|1] -> copy2 [1|#] [1|1] 
+[1|1] copyDone2 [eps|_] -> moveLeft [1|1] [eps|_] 
+[1|#] copyDone2 [eps|_] -> moveLeft [1|#] [eps|_] 
+[1|1] copy6 [eps|_] -> moveLeft [1|1] [eps|_] 
+moveLeft [eps|_] -> [eps|_] markSt 
+markDiv [eps|_] -> prime [eps|_] 
+[1|1] prime -> prime 1 prime 
+prime [1|1] -> prime 1 prime 
+[eps|1] prime -> prime eps prime 
+prime [eps|1] -> prime eps prime 
+[1|#] prime -> prime 1 prime 
+prime [1|#] -> prime 1 prime 
+[eps|#] prime -> prime eps prime 
+prime [eps|#] -> prime eps prime 
+[1|_] prime -> prime 1 prime 
+prime [1|_] -> prime 1 prime 
+[eps|_] prime -> prime eps prime 
+prime [eps|_] -> prime eps prime 
+prime -> eps 
