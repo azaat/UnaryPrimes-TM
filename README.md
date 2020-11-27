@@ -8,6 +8,13 @@ Still interested in this repo? You can try to generate one yourself!
 You can find final grammar files in [final_t0_grammar](./final_t0_grammar.txt) and
 [final_t1_grammar](./final_t1_grammar.txt)
 
+## Installation
+
+1) Install [maven](https://maven.apache.org/) 
+2) Run ```mvn package``` in the root directory of the project
+3) It generates a java jar file ```./target/primesChecker.jar```, which you can run like this:
+```java -jar ./target/primesChecker.jar [ARGUMENTS]```
+
 ## Usage
 
 ```
