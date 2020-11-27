@@ -14,8 +14,8 @@ import utils.WordUtils;
 import static models.UnrestrictedGrammar.*;
 import static utils.WordUtils.*;
 
-@Command(name = "Unary primes checker", version = "1.0", mixinStandardHelpOptions = true)
-public class Application implements Runnable {
+@Command(name = "PrimesChecker", version = "1.0", mixinStandardHelpOptions = true)
+public class PrimesChecker implements Runnable {
     @Option(names = "--grammar", required = true, description = "Specify grammar type: \"t0\" or \"t1\"")
     String type;
 
@@ -65,7 +65,7 @@ public class Application implements Runnable {
     }
 
     public static void main(String[] args) {
-        int exitCode = new CommandLine(new Application()).execute(args);
+        int exitCode = new CommandLine(new PrimesChecker()).execute(args);
         System.exit(exitCode);
     }
 

@@ -11,8 +11,7 @@ You can find final grammar files in [final_t0_grammar](./final_t0_grammar.txt) a
 ## Usage
 
 ```
-Usage: Unary primes checker [-hV] [--derivation] --contains=<number>
-                            --grammar=<type>
+Usage: PrimesChecker [-hV] [--derivation] --contains=<number> --grammar=<type>
       --contains=<number>   Specify number to check if it is prime
       --derivation          Show full derivation
       --grammar=<type>      Specify grammar type: "t0" or "t1"
