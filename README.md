@@ -33,6 +33,15 @@ Usage: Unary primes checker [-hV] [--derivation] --contains=<number>
 
 ##### Input:
 ```
+--contains=10 --grammar=t0
+```
+##### Output:
+```
+10 is not prime
+```
+
+##### Input:
+```
 --contains=5 --grammar=t0 --derivation
 ```
 ##### Output:
