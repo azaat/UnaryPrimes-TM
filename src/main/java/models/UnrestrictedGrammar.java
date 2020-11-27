@@ -1,4 +1,4 @@
-package formallang;
+package models;
 
 import java.util.*;
 
@@ -7,6 +7,8 @@ public class UnrestrictedGrammar {
     private final Set<GrammarSymbol> variables;
     private final Set<Production> productions;
     private final GrammarSymbol startSymbol;
+    // optional field, is present only if grammar was renamed with GrammarUtils.renameVariables
+    private Map<String, String> renamings;
 
     public UnrestrictedGrammar(
             Set<GrammarSymbol> terminals,
@@ -62,6 +64,14 @@ public class UnrestrictedGrammar {
 
     public GrammarSymbol getStartSymbol() {
         return startSymbol;
+    }
+
+    public Map<String, String> getRenamings() {
+        return renamings;
+    }
+
+    public void setRenamings(Map<String, String> renamings) {
+        this.renamings = renamings;
     }
 
     public static class Production {

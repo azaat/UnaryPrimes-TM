@@ -1,5 +1,7 @@
-package formallang;
+package converters;
 
+import models.TuringMachine;
+import models.UnrestrictedGrammar;
 import utils.GrammarUtils;
 import utils.TuringMachineUtils;
 
@@ -9,13 +11,13 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static formallang.UnrestrictedGrammar.GrammarSymbol;
-import static formallang.UnrestrictedGrammar.Production;
-import static formallang.TuringMachine.State;
-import static formallang.TuringMachine.TransitionContext;
-import static formallang.TuringMachine.Transition;
-import static formallang.TuringMachine.Transition.Direction;
-import static formallang.UnrestrictedGrammar.Production.Type;
+import static models.UnrestrictedGrammar.GrammarSymbol;
+import static models.UnrestrictedGrammar.Production;
+import static models.TuringMachine.State;
+import static models.TuringMachine.TransitionContext;
+import static models.TuringMachine.Transition;
+import static models.TuringMachine.Transition.Direction;
+import static models.UnrestrictedGrammar.Production.Type;
 
 public class LbaToCSGrammar {
     private static final String L = "%";
@@ -316,16 +318,5 @@ public class LbaToCSGrammar {
 
     private static GrammarSymbol createSymbol(String a, String b) {
         return new GrammarSymbol("[" + a + "," + b + "]", false);
-    }
-
-    public static void main(String[] args) {
-        Path turingMachinePath = Paths.get("src", "main", "resources", "sample/anbn_lba.txt");
-        try {
-            TuringMachine tm = TuringMachineUtils.loadTuringMachine(turingMachinePath);
-            UnrestrictedGrammar grammar = LbaToCSGrammar.convert(tm);
-            GrammarUtils.storeGrammar(grammar, "src/main/resources/sample/anbn_lba_grammar.txt");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }

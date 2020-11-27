@@ -1,8 +1,7 @@
 package utils;
 
-import formallang.TuringMachine;
-import formallang.UnrestrictedGrammar;
-import formallang.WordUtils;
+import models.TuringMachine;
+import models.UnrestrictedGrammar;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -14,8 +13,8 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static formallang.UnrestrictedGrammar.GrammarSymbol;
-import static formallang.UnrestrictedGrammar.Production;
+import static models.UnrestrictedGrammar.GrammarSymbol;
+import static models.UnrestrictedGrammar.Production;
 
 public class GrammarUtils {
     public static UnrestrictedGrammar renameVariables(UnrestrictedGrammar grammar) {
@@ -54,6 +53,8 @@ public class GrammarUtils {
         GrammarSymbol newStartSymbol = new GrammarSymbol(
                 newNames.get(grammar.getStartSymbol().getValue()), false
         );
+
+        grammar.setRenamings(newNames);
 
         return new UnrestrictedGrammar(newProductions, newStartSymbol);
     }
@@ -112,7 +113,7 @@ public class GrammarUtils {
                         .append(s.getValue())
                         .append(" ")
                 );
-                prodBuilder.append(" -> ");
+                prodBuilder.append("-> ");
                 production.getBody().forEach(s -> prodBuilder
                         .append(s.getValue())
                         .append(" ")
@@ -132,28 +133,29 @@ public class GrammarUtils {
     public static UnrestrictedGrammar optimize(UnrestrictedGrammar grammar, int depth, Set<TuringMachine.State> finalStates) {
         Set<Production> usedProds = new HashSet<>();
         for (int i = 0; i < depth; i++) {
-            Optional<List<Production>> result = WordUtils.contains(grammar, i, finalStates, false);
+            Optional<List<WordUtils.DerivationUnit>> result = WordUtils.contains(grammar, i, finalStates, false);
 
             result.ifPresent(
                     derivation -> derivation.forEach(
-                            production -> {
-                                if (production.getType().equals(Production.Type.TM_EMULATING)) {
-                                    usedProds.add(production);
+                            unit -> {
+                                if (unit.getProduction().getType().equals(Production.Type.TM_EMULATING)) {
+                                    usedProds.add(unit.getProduction());
                                 }
                             }
                     )
             );
         }
-        HashSet<Production> newProductions = new HashSet<>(grammar.getProductions());
+
+        HashSet<Production> newProductions = new LinkedHashSet<>(grammar.getProductions());
         newProductions.removeIf(
                 production ->
                         production.getType().equals(Production.Type.TM_EMULATING)
                                 && !usedProds.contains(production)
         );
+
         return new UnrestrictedGrammar(
                 grammar.getTerminals(), grammar.getVariables(), newProductions, grammar.getStartSymbol()
         );
-
     }
 
     public static void main(String[] args) throws Exception {
@@ -173,11 +175,16 @@ public class GrammarUtils {
 //        );
 //
 //        GrammarUtils.storeGrammar(grammar, "src/main/resources/test_grammar.txt");
-
+//
+//        TuringMachine tm = TuringMachineUtils.loadTuringMachine(
+//                Paths.get("src", "main", "resources", "turing_machines", "turing_machine.txt")
+//        );
+//        UnrestrictedGrammar g = TmToUnrestrictedGrammar.convert(tm);
+//        g = GrammarUtils.optimize(g, 20, Set.of(new TuringMachine.State("prime")));
         UnrestrictedGrammar g = GrammarUtils.loadGrammar(
-                Paths.get("src", "main", "resources", "grammars", "lba_grammar.txt")
+                Paths.get("src", "main", "resources", "grammars", "tm_grammar.txt")
         );
         g = GrammarUtils.renameVariables(g);
-        GrammarUtils.storeGrammar(g, "final_t1_grammar.txt");
+        GrammarUtils.storeGrammar(g, "final_t0_grammar.txt");
     }
 }

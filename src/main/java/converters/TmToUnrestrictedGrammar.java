@@ -1,11 +1,14 @@
-package formallang;
+package converters;
+
+import models.TuringMachine;
+import models.UnrestrictedGrammar;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static formallang.TuringMachine.*;
-import static formallang.UnrestrictedGrammar.*;
+import static models.TuringMachine.*;
+import static models.UnrestrictedGrammar.*;
 
 public class TmToUnrestrictedGrammar {
     //public static final Set<String> SIGMA = Set.of("0", "1");
@@ -19,37 +22,15 @@ public class TmToUnrestrictedGrammar {
         final Set<String> GAMMA;
         GAMMA = getPossTapeSymbols(tm);
 
-        // Construct terminals
-        Set<GrammarSymbol> terminals = SIGMA.stream().map(
-                s -> new GrammarSymbol(s, true)
-        ).collect(Collectors.toSet());
-
-        // Construct variables
-        Set<State> states = tm.getStates();
-        Set<GrammarSymbol> variables = tm.getStates().stream().map(
-                s -> new GrammarSymbol(s.getValue(), false)
-        ).collect(Collectors.toSet());
-
         GrammarSymbol s = new GrammarSymbol("S", false);
         GrammarSymbol s1 = new GrammarSymbol("S1", false);
         GrammarSymbol s2 = new GrammarSymbol("S2", false);
         GrammarSymbol s3 = new GrammarSymbol("S3", false);
-        variables.addAll(Arrays.asList(s1, s2, s3, s));
-
-        for (String xSym : SIGMA) {
-            for (String ySym : GAMMA) {
-                variables.add(
-                        new GrammarSymbol(
-                                "[" + xSym + "|" + ySym + "]", false
-                        )
-                );
-            }
-        }
 
         GrammarSymbol q0 = new GrammarSymbol(tm.getInitialState().getValue(), false);
 
         // Generating productions
-        Set<Production> productions = new HashSet<>(Arrays.asList(
+        Set<Production> productions = new LinkedHashSet<>(Arrays.asList(
                 new Production(List.of(s), List.of(s1, q0, s2), Production.Type.TAPE_GENERATING),
                 new Production(List.of(s2), List.of(s3), Production.Type.TAPE_GENERATING),
                 new Production(List.of(s1), List.of(new GrammarSymbol("[" + EPS + "|" + BLANK + "]", false)), Production.Type.TAPE_GENERATING),
@@ -133,7 +114,7 @@ public class TmToUnrestrictedGrammar {
             body = List.of(new GrammarSymbol(EPS, true));
             productions.add(new Production(head, body, Production.Type.WORD_RESTORING));
         }
-        return new UnrestrictedGrammar(terminals, variables, productions, s);
+        return new UnrestrictedGrammar(productions, s);
     }
 
     private static Set<String> getPossTapeSymbols(TuringMachine turingMachine) {

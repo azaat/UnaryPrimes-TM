@@ -1,26 +1,49 @@
-package formallang;
+package utils;
+
+import models.UnrestrictedGrammar;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static formallang.TmToUnrestrictedGrammar.BLANK;
-import static formallang.TmToUnrestrictedGrammar.EPS;
-import static formallang.UnrestrictedGrammar.GrammarSymbol;
-import static formallang.UnrestrictedGrammar.Production;
+import static converters.TmToUnrestrictedGrammar.BLANK;
+import static converters.TmToUnrestrictedGrammar.EPS;
+import static models.TuringMachine.*;
+import static models.UnrestrictedGrammar.GrammarSymbol;
+import static models.UnrestrictedGrammar.Production;
 
 public class WordUtils {
+    public static class DerivationUnit {
+        private final Production production;
+        private final List<GrammarSymbol> sentence;
+
+        public DerivationUnit(Production production, List<GrammarSymbol> sentence) {
+            this.production = production;
+            this.sentence = sentence;
+        }
+
+        public Production getProduction() {
+            return production;
+        }
+
+        public List<GrammarSymbol> getSentence() {
+            return sentence;
+        }
+    }
+
     public static final GrammarSymbol epsBlankSym = new GrammarSymbol("[" + EPS + "|" + BLANK + "]", false);
 
     public static boolean isWordHieroglyph(GrammarSymbol sym) {
         return sym.getValue().contains("[") && !sym.getValue().equals(epsBlankSym.getValue());
     }
 
-    public static Optional<List<Production>> contains(UnrestrictedGrammar grammar, int n, Set<TuringMachine.State> finalStates) {
+    public static Optional<List<DerivationUnit>> contains(UnrestrictedGrammar grammar, int n, Set<State> finalStates) {
         return contains(grammar, n, finalStates, false);
     }
 
-    public static Optional<List<Production>> contains(UnrestrictedGrammar grammar, int n, Set<TuringMachine.State> finalStates, boolean needDerivation) {
+    public static Optional<List<DerivationUnit>> contains(
+            UnrestrictedGrammar grammar, int n, Set<State> finalStates, boolean needDerivation
+    ) {
         List<Production> productions = grammar.getProductions().stream().sorted(
                 Comparator.comparingInt(p -> p.getBody().size())
         ).collect(Collectors.toList());
@@ -28,12 +51,12 @@ public class WordUtils {
         final class Node {
             final int depth;
             final List<GrammarSymbol> sentence;
-            final List<Production> derivation;
+            final List<DerivationUnit> derivation;
 
             Node(
                     List<GrammarSymbol> sentence,
                     int depth,
-                    List<Production> derivation
+                    List<DerivationUnit> derivation
             ) {
                 this.sentence = sentence;
                 this.depth = depth;
@@ -56,7 +79,7 @@ public class WordUtils {
             boolean foundFinal = false;
 
             if (!needDerivation) {
-                for (TuringMachine.State finalState : finalStates) {
+                for (State finalState : finalStates) {
                     Optional<Integer> optWordSize = getWordSizeIfHasFinal(sentence, productions, finalState);
                     if (optWordSize.isPresent()) {
                         int wordSize = optWordSize.get();
@@ -128,7 +151,8 @@ public class WordUtils {
                                 newSentence.addAll(end);
 
                                 queue.add(new Node(
-                                        newSentence, node.depth + 1, Stream.concat(node.derivation.stream(), Stream.of(production))
+                                        newSentence, node.depth + 1,
+                                        Stream.concat(node.derivation.stream(), Stream.of(new DerivationUnit(production, newSentence)))
                                             .collect(Collectors.toList())
                                 ));
                             }
@@ -142,7 +166,7 @@ public class WordUtils {
         return Optional.empty();
     }
 
-    private static Optional<Integer> getWordSizeIfHasFinal(List<GrammarSymbol> sentence, List<Production> productions, TuringMachine.State finalState) {
+    private static Optional<Integer> getWordSizeIfHasFinal(List<GrammarSymbol> sentence, List<Production> productions, State finalState) {
         // Hacky optimization to accept word when encountered final state
         // without opening all the variables with BFS
         if (sentence.contains(new GrammarSymbol(finalState.getValue(), false))) {

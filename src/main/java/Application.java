@@ -1,56 +1,107 @@
-import formallang.*;
+import models.*;
+import picocli.CommandLine;
 import utils.GrammarUtils;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
-import picocli.CommandLine;
+import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
+import utils.WordUtils;
 
-public class Application {
-    @Option(names = "-grammar", description = "specify grammar path")
-    String grammarType;
+import static models.UnrestrictedGrammar.*;
+import static utils.WordUtils.*;
 
-    @Option(names = "-contains", required = true, description = "specify input number of symbols for grammar")
+@Command(name = "Unary primes checker", version = "1.0", mixinStandardHelpOptions = true)
+public class Application implements Runnable {
+    @Option(names = "--grammar", required = true, description = "Specify grammar type: \"t0\" or \"t1\"")
+    String type;
+
+    @Option(names = "--contains", required = true, description = "Specify number to check if it is prime")
     int number;
 
-    @Option(names = "-derivation", description = "use full derivation")
+    @Option(names = "--derivation", description = "Show full derivation")
     boolean derivationRequested = false;
 
-    @Option(names = { "-h", "--help" }, usageHelp = true, description = "display a help message")
-    private boolean helpRequested = false;
-
-    public static void main(String[] args) throws Exception {
-        Application unary = new Application();
-        new CommandLine(unary).parseArgs(args);
-
+    @Override
+    public void run() {
         Path grammarPath;
-
-        if (unary.grammarType.equals("t0")) {
-            grammarPath = Paths.get("src", "main", "resources", "grammars/tm_grammar.txt");
-        } else if (unary.grammarType.equals("t1") ) {
-            grammarPath = Paths.get("src", "main", "resources", "grammars/lba_grammar.txt");
+        if (type.equals("t0")) {
+            grammarPath = Paths.get("src", "main", "resources", "grammars", "tm_grammar.txt");
+        } else if (type.equals("t1") ) {
+            grammarPath = Paths.get("src", "main", "resources", "grammars", "lba_grammar.txt");
         } else {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Grammar type should be \"t0\" or \"t1\"");
         }
 
-        UnrestrictedGrammar grammar = GrammarUtils.loadGrammar(grammarPath);
-        Optional<List<UnrestrictedGrammar.Production>> result = WordUtils.contains(
-                grammar, unary.number, Set.of(new TuringMachine.State("prime")), unary.derivationRequested
+        UnrestrictedGrammar grammar;
+        try {
+            grammar = GrammarUtils.loadGrammar(grammarPath);
+        } catch (Exception e) {
+            throw new RuntimeException("Can't load specified grammar");
+        }
+
+        Optional<List<WordUtils.DerivationUnit>> result = WordUtils.contains(
+                grammar, number, Set.of(new TuringMachine.State("prime")), derivationRequested
         );
         if (result.isPresent()) {
-            System.out.println("Contains " + unary.number);
+            System.out.println(number + " is prime");
         } else {
-            System.out.println("Doesn't contain " + unary.number);
+            System.out.println(number + " is not prime");
         }
 
-        if (unary.derivationRequested && result.isPresent()) {
-            for (var prod : result.get()) {
-                System.out.println(prod);
+        if (derivationRequested && result.isPresent()) {
+            GrammarUtils.renameVariables(grammar);
+            Map<String, String> newNames = grammar.getRenamings();
+
+            System.out.println("Start symbol: " + newNames.get(grammar.getStartSymbol().getValue()));
+            for (var unit : result.get()) {
+                DerivationUnit newUnit = getRenamedDerivationUnit(unit, newNames);
+                System.out.println("Applied " + newUnit.getProduction() + ", got " + newUnit.getSentence());
             }
         }
+    }
+
+    public static void main(String[] args) {
+        int exitCode = new CommandLine(new Application()).execute(args);
+        System.exit(exitCode);
+    }
+
+    private DerivationUnit getRenamedDerivationUnit(DerivationUnit unit, Map<String, String> newNames) {
+        Production p = new Production(
+                unit.getProduction().getHead().stream()
+                        .map(s -> {
+                            if (s.isTerminal()) {
+                                return s;
+                            } else {
+                                return new GrammarSymbol(newNames.get(s.getValue()), false);
+                            }
+                        })
+                        .collect(Collectors.toList()),
+                unit.getProduction().getBody().stream()
+                        .map(s -> {
+                            if (s.isTerminal()) {
+                                return s;
+                            } else {
+                                return new GrammarSymbol(newNames.get(s.getValue()), false);
+                            }
+                        })
+                        .collect(Collectors.toList()),
+                unit.getProduction().getType()
+        );
+
+        List<GrammarSymbol> sentence = unit.getSentence().stream()
+                .map(s -> {
+                    if (s.isTerminal()) {
+                        return s;
+                    } else {
+                        return new GrammarSymbol(newNames.get(s.getValue()), false);
+                    }
+                })
+                .collect(Collectors.toList());
+
+        return new DerivationUnit(p, sentence);
     }
 }

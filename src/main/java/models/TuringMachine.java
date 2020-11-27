@@ -1,4 +1,4 @@
-package formallang;
+package models;
 
 import java.util.Map;
 import java.util.Set;
