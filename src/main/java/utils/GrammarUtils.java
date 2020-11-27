@@ -23,7 +23,7 @@ public class GrammarUtils {
         Map<String, String> newNames = new HashMap<>();
         int cnt = 0;
         for (var variable : grammar.getVariables()) {
-            newNames.put(variable.getValue(), "S"+ cnt++);
+            newNames.put(variable.getValue(), "S" + cnt++);
         }
 
         for (var production: grammar.getProductions()) {
@@ -74,7 +74,7 @@ public class GrammarUtils {
                 line = reader.readLine();
                 continue;
             }
-            String[] splitLine = line.strip().split(" -> ");
+            String[] splitLine = line.strip().split("->");
 
             List<GrammarSymbol> head = new LinkedList<>();
             List<GrammarSymbol> body = new LinkedList<>();
