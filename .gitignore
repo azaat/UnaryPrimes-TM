@@ -76,6 +76,4 @@ target/**
 
 .idea/unary-primes.iml
 
-*.txt
-
 unary-primes.iml
