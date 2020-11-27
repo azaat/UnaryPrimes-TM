@@ -28,7 +28,7 @@ Usage: PrimesChecker [-hV] [--derivation] --contains=<number> --grammar=<type>
 
 ## Examples
 
-##### Input:
+##### Input arguments:
 ```
 --contains=7 --grammar=t1
 ```
@@ -37,7 +37,7 @@ Usage: PrimesChecker [-hV] [--derivation] --contains=<number> --grammar=<type>
 7 is prime
 ```
 
-##### Input:
+##### Input arguments:
 ```
 --contains=10 --grammar=t0
 ```
@@ -46,7 +46,7 @@ Usage: PrimesChecker [-hV] [--derivation] --contains=<number> --grammar=<type>
 10 is not prime
 ```
 
-##### Input:
+##### Input arguments:
 ```
 --contains=5 --grammar=t0 --derivation
 ```
