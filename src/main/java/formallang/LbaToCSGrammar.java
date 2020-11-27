@@ -319,11 +319,11 @@ public class LbaToCSGrammar {
     }
 
     public static void main(String[] args) {
-        Path turingMachinePath = Paths.get("src", "main", "resources", "anbn_lba.txt");
+        Path turingMachinePath = Paths.get("src", "main", "resources", "sample/anbn_lba.txt");
         try {
             TuringMachine tm = TuringMachineUtils.loadTuringMachine(turingMachinePath);
             UnrestrictedGrammar grammar = LbaToCSGrammar.convert(tm);
-            GrammarUtils.storeGrammar(grammar, "src/main/resources/anbn_lba_grammar.txt");
+            GrammarUtils.storeGrammar(grammar, "src/main/resources/sample/anbn_lba_grammar.txt");
         } catch (IOException e) {
             e.printStackTrace();
         }

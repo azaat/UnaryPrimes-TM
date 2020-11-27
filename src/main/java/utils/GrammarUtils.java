@@ -157,29 +157,27 @@ public class GrammarUtils {
     }
 
     public static void main(String[] args) throws Exception {
-        GrammarSymbol startSymb = new GrammarSymbol("S", false);
-        GrammarSymbol a = new GrammarSymbol("a", true);
-        GrammarSymbol b = new GrammarSymbol("b", true);
-        GrammarSymbol eps = new GrammarSymbol("eps", true);
+//        GrammarSymbol startSymb = new GrammarSymbol("S", false);
+//        GrammarSymbol a = new GrammarSymbol("a", true);
+//        GrammarSymbol b = new GrammarSymbol("b", true);
+//        GrammarSymbol eps = new GrammarSymbol("eps", true);
+//
+//        Production prod1 = new Production(List.of(startSymb), List.of(startSymb, a, startSymb, b));
+//        Production prod2 = new Production(List.of(startSymb), List.of(eps));
+//
+//        UnrestrictedGrammar grammar = new UnrestrictedGrammar(
+//                Set.of(a, b, eps),
+//                Set.of(startSymb),
+//                Set.of(prod1, prod2),
+//                startSymb
+//        );
+//
+//        GrammarUtils.storeGrammar(grammar, "src/main/resources/test_grammar.txt");
 
-        Production prod1 = new Production(List.of(startSymb), List.of(startSymb, a, startSymb, b));
-        Production prod2 = new Production(List.of(startSymb), List.of(eps));
-
-        UnrestrictedGrammar grammar = new UnrestrictedGrammar(
-                Set.of(a, b, eps),
-                Set.of(startSymb),
-                Set.of(prod1, prod2),
-                startSymb
+        UnrestrictedGrammar g = GrammarUtils.loadGrammar(
+                Paths.get("src", "main", "resources", "grammars", "lba_grammar.txt")
         );
-
-        GrammarUtils.storeGrammar(grammar, "src/main/resources/test_grammar.txt");
-
-        UnrestrictedGrammar g = GrammarUtils.loadGrammar(Paths.get("lba_grammar.txt"));
         g = GrammarUtils.renameVariables(g);
-
-        System.out.println(g.getStartSymbol());
-        System.out.println(g.getTerminals());
-        System.out.println(g.getVariables());
-        System.out.println(g.getProductions());
+        GrammarUtils.storeGrammar(g, "final_t1_grammar.txt");
     }
 }
