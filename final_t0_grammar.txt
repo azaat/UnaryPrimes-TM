@@ -1,0 +1,71 @@
+Start symbol: S30
+Terminals: 1 
+
+S0 S1  -> S1 S0 
+S2 S3 S4  -> S3 S2 S4 
+S5 S1  -> S4 S6 
+S7  -> S1 S7 
+S4 S8 S1  -> S8 S4 S1 
+S9 S4  -> S4 S10 
+S11 S4  -> S4 S12 
+S1 S8 S1  -> S8 S1 S1 
+S13  -> S14 
+S15 S1  -> S1 S15 
+S4 S16 S4  -> S8 S4 S4 
+S2 S3 S1  -> S3 S2 S1 
+S1 S16 S4  -> S8 S1 S4 
+S4 S11 S2  -> S3 S4 S2 
+S17 S1  -> S4 S18 
+S19 S1  -> S1 S19 
+S1 S11 S2  -> S3 S1 S2 
+S20 S4  -> S1 S0 
+S4 S6 S1  -> S16 S4 S4 
+S21 S1  -> S4 S6 
+S20 S1  -> S1 S20 
+S7  -> S13 
+S22  -> S14 
+S4 S23  -> S23 1 S23 
+S18 S1  -> S1 S18 
+S1 S24 S2  -> S3 S1 S2 
+S1 S24 S1  -> S16 S1 S4 
+S3 S2  -> S2 S25 
+S26 S23  -> S23 1 S23 
+S22  -> S2 
+S23 S26  -> S23 1 S23 
+S23 S27  -> S23 S14 S23 
+S8 S4  -> S1 S17 
+S25 S1  -> S4 S20 
+S18 S4  -> S4 S15 
+S10 S1  -> S4 S19 
+S28 S1  -> S4 S9 
+S4 S12 S1  -> S16 S4 S4 
+S1 S23  -> S23 1 S23 
+S23 S29  -> S23 S14 S23 
+S11 S1  -> S4 S12 
+S30  -> S22 S31 S7 
+S25 S4  -> S4 S0 
+S6 S2  -> S23 S2 
+S23 S2  -> S23 S14 S23 
+S13  -> S2 
+S1 S3 S1  -> S3 S1 S1 
+S15 S4  -> S1 S24 
+S21 S4  -> S4 S6 
+S4 S3 S1  -> S3 S4 S1 
+S29 S23  -> S23 S14 S23 
+S27 S23  -> S23 S14 S23 
+S23 S4  -> S23 1 S23 
+S1 S17 S4  -> S28 S1 S4 
+S1 S3 S4  -> S3 S1 S4 
+S19 S4  -> S1 S11 
+S4 S3 S4  -> S3 S4 S4 
+S2 S23  -> S23 S14 S23 
+S23  -> S14 
+S4 S6 S4  -> S16 S4 S4 
+S23 S1  -> S23 1 S23 
+S1 S24 S4  -> S16 S1 S4 
+S4 S12 S4  -> S16 S4 S4 
+S4 S16 S1  -> S16 S4 S1 
+S31 S1  -> S4 S5 
+S10 S4  -> S4 S11 
+S1 S16 S1  -> S16 S1 S1 
+S0 S4  -> S1 S21 

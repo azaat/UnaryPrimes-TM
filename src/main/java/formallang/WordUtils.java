@@ -91,13 +91,13 @@ public class WordUtils {
                     continue;
                 }
 
-                if ( needDerivation && sentence.stream().allMatch(
+                if (sentence.stream().allMatch(
                         GrammarSymbol::isTerminal
                 )) {
                     // All terminals, generated word
                     if (sentence.size() > n) return Optional.empty();
                     else if (sentence.size() == n) return Optional.of(node.derivation);
-                    System.out.println("Generated " + sentence + " depth: " + node.depth);
+                    //System.out.println("Generated " + sentence + " depth: " + node.depth);
                 }
 
 

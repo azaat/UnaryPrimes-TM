@@ -1,61 +1,56 @@
 import formallang.*;
 import utils.GrammarUtils;
-import utils.TuringMachineUtils;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static formallang.UnrestrictedGrammar.*;
+import picocli.CommandLine;
+import picocli.CommandLine.Option;
 
 public class Application {
-    public static void main(String[] args) {
-       /* Path turingMachinePath = Paths.get("src", "main", "resources", "turing_machine.txt");
-        try {
-            TuringMachine tm = TuringMachineUtils.loadTuringMachine(turingMachinePath);
+    @Option(names = "-grammar", description = "specify grammar path")
+    String grammarType;
 
-            UnrestrictedGrammar grammar = TmToUnrestrictedGrammar.convert(tm);
-            System.out.println(grammar.getProductions().size());
-            WordsGenerator.generate(grammar, 5, tm.getFinalStates());*/
-         Path turingMachinePath = Paths.get("src", "main", "resources", "lba.txt");
-        try {
-            TuringMachine tm = TuringMachineUtils.loadTuringMachine(turingMachinePath);
+    @Option(names = "-contains", required = true, description = "specify input number of symbols for grammar")
+    int number;
 
-            UnrestrictedGrammar grammar = LbaToCSGrammar.convert(tm);
-            System.out.println(grammar.getProductions().size() + " productions");
-//            if (WordUtils.contains(grammar, 8, tm.getFinalStates()).isPresent()) {
-//                System.out.println(true);
-//            };
+    @Option(names = "-derivation", description = "use full derivation")
+    boolean derivationRequested = false;
 
+    @Option(names = { "-h", "--help" }, usageHelp = true, description = "display a help message")
+    private boolean helpRequested = false;
 
-            Set<Production> usedProds = new HashSet<>();
-            for (var i = 2; i < 8; i++) {
-                Optional<List<Production>> result = WordUtils.contains(grammar, i, tm.getFinalStates(), false);
-                result.ifPresent(
-                        derivation -> derivation.forEach(
-                                production -> {
-                                    if (production.getType().equals(Production.Type.TM_EMULATING)) {
-                                        usedProds.add(production);
-                                    }
-                                }
-                        )
-                );
+    public static void main(String[] args) throws Exception {
+        Application unary = new Application();
+        new CommandLine(unary).parseArgs(args);
+
+        Path grammarPath;
+
+        if (unary.grammarType.equals("t0")) {
+            grammarPath = Paths.get("src", "main", "resources", "grammars/tm_grammar.txt");
+        } else if (unary.grammarType.equals("t1") ) {
+            grammarPath = Paths.get("src", "main", "resources", "grammars/lba_grammar.txt");
+        } else {
+            throw new IllegalArgumentException();
+        }
+
+        UnrestrictedGrammar grammar = GrammarUtils.loadGrammar(grammarPath);
+        Optional<List<UnrestrictedGrammar.Production>> result = WordUtils.contains(
+                grammar, unary.number, Set.of(new TuringMachine.State("prime")), unary.derivationRequested
+        );
+        if (result.isPresent()) {
+            System.out.println("Contains " + unary.number);
+        } else {
+            System.out.println("Doesn't contain " + unary.number);
+        }
+
+        if (unary.derivationRequested && result.isPresent()) {
+            for (var prod : result.get()) {
+                System.out.println(prod);
             }
-
-            grammar.getProductions().removeIf(
-                    production ->
-                            production.getType().equals(Production.Type.TM_EMULATING)
-                                    && !usedProds.contains(production)
-            );
-
-            GrammarUtils.storeGrammar(grammar, "lba_grammar.txt");
-
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 }
